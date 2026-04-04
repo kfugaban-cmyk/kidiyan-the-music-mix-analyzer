@@ -25,21 +25,24 @@ function LabelPill({ label }: { label: string }) {
   );
 }
 
-function AxisRow({ left, right, value }: { left: string; right: string; value: number }) {
+function AxisRow({ name, left, right, value }: { name: string; left: string; right: string; value: number }) {
   return (
-    <div className="flex items-center gap-2">
-      <span className={`text-xs w-14 text-right transition-colors ${value <= 50 ? "text-stone-700 font-medium" : "text-stone-300"}`}>
-        {left}
-      </span>
-      <div className="relative flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
-        <div
-          className="absolute top-0 h-full bg-violet-300 rounded-full transition-all duration-700"
-          style={{ width: `${value}%` }}
-        />
+    <div className="space-y-1">
+      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-medium">{name}</p>
+      <div className="flex items-center gap-2">
+        <span className={`text-xs w-14 text-right transition-colors ${value <= 50 ? "text-stone-700 font-medium" : "text-stone-300"}`}>
+          {left}
+        </span>
+        <div className="relative flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+          <div
+            className="absolute top-0 h-full bg-violet-300 rounded-full transition-all duration-700"
+            style={{ width: `${value}%` }}
+          />
+        </div>
+        <span className={`text-xs w-10 transition-colors ${value > 50 ? "text-stone-700 font-medium" : "text-stone-300"}`}>
+          {right}
+        </span>
       </div>
-      <span className={`text-xs w-10 transition-colors ${value > 50 ? "text-stone-700 font-medium" : "text-stone-300"}`}>
-        {right}
-      </span>
     </div>
   );
 }
@@ -140,11 +143,11 @@ export function SummaryCards({ analysis }: Props) {
           </div>
           <p className="text-sm font-semibold text-stone-700">Emotional Read</p>
         </div>
-        <div className="space-y-3">
-          <AxisRow left="intimate" right="distant" value={100 - emotional.intimacy.value} />
-          <AxisRow left="soft" right="sharp" value={100 - emotional.texture.value} />
-          <AxisRow left="dark" right="bright" value={emotional.brightness.value} />
-          <AxisRow left="narrow" right="wide" value={emotional.width.value} />
+        <div className="space-y-4">
+          <AxisRow name="Presence" left="recessed" right="upfront" value={emotional.presence.value} />
+          <AxisRow name="Attack" left="rounded" right="cutting" value={emotional.attack.value} />
+          <AxisRow name="Space" left="dry" right="open" value={emotional.space.value} />
+          <AxisRow name="Weight" left="airy" right="heavy" value={emotional.weight.value} />
         </div>
       </div>
     </div>

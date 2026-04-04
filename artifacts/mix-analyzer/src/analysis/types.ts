@@ -29,10 +29,14 @@ export interface DynamicsData {
 }
 
 export interface EmotionalReadData {
-  intimacy: { value: number; label: "intimate" | "distant" };
-  texture: { value: number; label: "soft" | "sharp" };
-  brightness: { value: number; label: "dark" | "bright" };
-  width: { value: number; label: "narrow" | "wide" };
+  /** How forward the lead content sits — vocal presence vs. background */
+  presence: { value: number; label: "recessed" | "upfront" };
+  /** Transient character — soft/rounded attacks vs. sharp/cutting hits */
+  attack: { value: number; label: "rounded" | "cutting" };
+  /** Sense of room — tight and dry vs. open and reverberant */
+  space: { value: number; label: "dry" | "open" };
+  /** Spectral gravity — airy high-shelf feel vs. low-end weight */
+  weight: { value: number; label: "airy" | "heavy" };
 }
 
 export interface TranslationRiskData {

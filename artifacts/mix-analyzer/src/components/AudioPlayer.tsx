@@ -50,7 +50,7 @@ export function AudioPlayer({ file }: Props) {
     <div className="bg-white rounded-2xl border border-stone-100 p-4 shadow-sm">
       <audio
         ref={audioRef}
-        src={url}
+        src={url || undefined}
         onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime ?? 0)}
         onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
         onEnded={() => setIsPlaying(false)}

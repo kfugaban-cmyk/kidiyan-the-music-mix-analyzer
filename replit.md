@@ -25,3 +25,29 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `pnpm --filter @workspace/api-server run dev` — run API server locally
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+
+## Artifacts
+
+### Mix Analyzer (`artifacts/mix-analyzer`)
+
+A browser-based audio mix analysis dashboard for music producers. **Frontend-only — no backend.**
+
+**Features (v1):**
+- Upload WAV or MP3 files via drag-and-drop
+- In-browser audio playback
+- Waveform visualization (peak amplitude over time)
+- Tonal balance overview (sub / low-mid / mid / high band energy)
+- Stereo width analysis (mid/side ratio)
+- Dynamic contrast (crest factor / RMS)
+- 4 summary cards: Tonal Balance, Dynamic Feel, Translation Risk, Emotional Read
+- Emotional Read: heuristic label pairs (intimate/distant, soft/sharp, dark/bright, narrow/wide)
+
+**Analysis logic lives in `src/analysis/`** — each file is isolated so scoring rules can be tweaked independently:
+- `waveform.ts` — peak amplitude downsampling
+- `spectrum.ts` — FFT-based band energy (uses Web Audio API)
+- `stereoWidth.ts` — mid/side energy ratio
+- `dynamics.ts` — crest factor + RMS/peak dB
+- `emotionalRead.ts` — heuristic label mapping + translation risk
+
+**Tech:** React + Vite, Tailwind CSS, Web Audio API, browser-only (no server calls)
+**Preview path:** `/`

@@ -4,8 +4,38 @@ interface Props {
   data: DynamicsData;
 }
 
+function getTip(d: DynamicsData): string | null {
+  const { crestFactor } = d;
+
+  if (crestFactor < 6) {
+    return "The mix is heavily limited — most transient energy has been flattened. To restore punch, try pulling the master limiter ceiling back 2–3 dB, or reduce the ratio on upstream compressors before revisiting the limiter.";
+  }
+  if (crestFactor < 9) {
+    return "Well compressed with limited headroom going into mastering. If you want more punch, try parallel compression — keep an uncompressed path blended alongside the compressed signal and dial in to taste.";
+  }
+  if (crestFactor > 20) {
+    return "Wide dynamic range — streaming platforms will normalize loudness down, which may make quieter passages feel too low. A gentle limiter at −1 to −2 dBFS ceiling can raise the RMS without harming the transients.";
+  }
+  if (crestFactor > 15) {
+    return "Good dynamics — if you're targeting streaming, a light limiting pass before delivery ensures the normalized playback level doesn't make the mix sound underwhelming compared to louder tracks.";
+  }
+  return null;
+}
+
+function Tip({ text }: { text: string }) {
+  return (
+    <div className="mt-3 rounded-xl p-3" style={{ background: "hsl(40 70% 96%)", boxShadow: "0 0 0 1px hsl(40 50% 87%)" }}>
+      <p className="text-xs leading-relaxed text-amber-900">
+        <span className="font-bold text-amber-700 uppercase tracking-wider text-[10px]">Fix → </span>
+        {text}
+      </p>
+    </div>
+  );
+}
+
 export function DynamicsDisplay({ data }: Props) {
   const { crestFactor, rmsDb, peakDb, score } = data;
+  const tip = getTip(data);
 
   const cardStyle = { background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)", boxShadow: "0 1px 3px hsl(263 30% 30% / 0.07), 0 0 0 1px hsl(263 20% 90%)" };
   const statStyle = { background: "hsl(263 15% 96%)", boxShadow: "0 0 0 1px hsl(263 15% 90%)" };
@@ -40,6 +70,7 @@ export function DynamicsDisplay({ data }: Props) {
           <p className="text-xs text-violet-500 mt-0.5">Crest factor</p>
         </div>
       </div>
+      {tip && <Tip text={tip} />}
     </div>
   );
 }

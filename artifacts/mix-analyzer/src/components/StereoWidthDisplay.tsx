@@ -4,8 +4,38 @@ interface Props {
   data: StereoWidthData;
 }
 
+function getTip(d: StereoWidthData): string | null {
+  const { widthScore } = d;
+
+  if (widthScore < 15) {
+    return "The mix is almost mono. Adding stereo width to reverbs, delays, or background pads can open it up considerably. Even a subtle chorus or haas effect on a bus can make a significant difference.";
+  }
+  if (widthScore < 30) {
+    return "The stereo field is tight. If this isn't intentional, try widening the room reverb or applying gentle M/S processing on the mix bus. Keep anything below 150 Hz in mono for the best translation.";
+  }
+  if (widthScore > 85) {
+    return "The stereo image is very wide — test in mono before mastering. Hard-panned elements can phase-cancel or disappear on a single speaker. Consider narrowing the side signal, especially below 200 Hz.";
+  }
+  if (widthScore > 72) {
+    return "Wide stereo field — check mono compatibility. Streaming playback on phones and smart speakers is often mono or near-mono, so important elements should still land after a fold-down.";
+  }
+  return null;
+}
+
+function Tip({ text }: { text: string }) {
+  return (
+    <div className="mt-3 rounded-xl p-3" style={{ background: "hsl(40 70% 96%)", boxShadow: "0 0 0 1px hsl(40 50% 87%)" }}>
+      <p className="text-xs leading-relaxed text-amber-900">
+        <span className="font-bold text-amber-700 uppercase tracking-wider text-[10px]">Fix → </span>
+        {text}
+      </p>
+    </div>
+  );
+}
+
 export function StereoWidthDisplay({ data }: Props) {
   const { widthScore, midEnergy, sideEnergy } = data;
+  const tip = getTip(data);
 
   const cardStyle = { background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)", boxShadow: "0 1px 3px hsl(263 30% 30% / 0.07), 0 0 0 1px hsl(263 20% 90%)" };
   const statStyle = { background: "hsl(263 15% 96%)", boxShadow: "0 0 0 1px hsl(263 15% 90%)" };
@@ -40,6 +70,7 @@ export function StereoWidthDisplay({ data }: Props) {
           <p className="text-xs text-violet-500 mt-0.5">Width score</p>
         </div>
       </div>
+      {tip && <Tip text={tip} />}
     </div>
   );
 }

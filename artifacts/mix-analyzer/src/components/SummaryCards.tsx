@@ -1,13 +1,19 @@
 import type { MixAnalysis, SpectrumData, DynamicsData, EmotionalReadData } from "@/analysis/types";
 import { AlertTriangle, Activity, Headphones, Sparkles } from "lucide-react";
 
-function generateEmotionalSummary(e: EmotionalReadData): string {
+interface EmotionalParagraph {
+  character: string;
+  listenerEffect: string;
+  masteringNote: string;
+}
+
+function buildEmotionalParagraph(e: EmotionalReadData): EmotionalParagraph {
   const p = e.presence.value;   // recessed (0) → upfront (100)
   const a = e.attack.value;     // rounded (0) → cutting (100)
   const s = e.space.value;      // dry (0) → open (100)
   const w = e.weight.value;     // airy (0) → heavy (100)
 
-  // Opening clause — overall character (presence × space)
+  // --- Sentence 1: character (presence × space + attack × weight) ---
   let opening: string;
   if (p < 35 && s < 35)       opening = "close and dry";
   else if (p < 35 && s > 65)  opening = "distant but open";
@@ -19,7 +25,6 @@ function generateEmotionalSummary(e: EmotionalReadData): string {
   else if (s < 35)             opening = "intimate and focused";
   else                         opening = "centered and even";
 
-  // Second clause — texture and body (attack × weight)
   let texture: string;
   if (a < 35 && w < 35)       texture = "a light, feathery touch with very little body";
   else if (a < 35 && w > 65)  texture = "smooth transients and a heavy, grounded bottom";
@@ -33,7 +38,70 @@ function generateEmotionalSummary(e: EmotionalReadData): string {
   else if (w < 35)             texture = "gentle definition and a lean, airy frame";
   else                         texture = "balanced weight and a measured, even edge";
 
-  return `${opening}, with ${texture}`;
+  const character = `${opening}, with ${texture}`;
+
+  // --- Sentence 2: listener effect (presence × weight as primary drivers) ---
+  let listenerEffect: string;
+  if (p > 65 && w > 65) {
+    listenerEffect = "This combination pulls the listener in both emotionally and physically — the upfront presence demands attention while the low-end weight gives the body something to feel.";
+  } else if (p > 65 && w < 35) {
+    listenerEffect = "The forward presence keeps the listener engaged and alert, but the thin body means the energy comes from edge rather than mass — it can feel exciting but tiring over a full listen.";
+  } else if (p > 65 && s > 65) {
+    listenerEffect = "Being both present and spacious, the mix creates a sense of being in a room with the sound rather than behind it — immersive and immediate at once.";
+  } else if (p > 65) {
+    listenerEffect = "The upfront character keeps the listener close — there's no distance between the lead and the ear, which creates intimacy and directness.";
+  } else if (p < 35 && s > 65) {
+    listenerEffect = "The recessed presence and open space give the mix a cinematic quality — the listener observes rather than participates, which suits atmospheric or background material well.";
+  } else if (p < 35 && w > 65) {
+    listenerEffect = "The bottom end does most of the emotional work here — physical and weighty, but the lead stays back, which can create a dark, submerged feeling.";
+  } else if (p < 35) {
+    listenerEffect = "The mix sits back from the listener rather than reaching out, which can feel understated and cool, or slightly lifeless depending on the genre and intent.";
+  } else if (w > 65 && a > 65) {
+    listenerEffect = "Heavy low end combined with sharp transients creates a physically demanding listen — punchy and driving, the kind of mix that demands a sound system to fully land.";
+  } else if (w > 65) {
+    listenerEffect = "The weight of the low end grounds the emotional experience — there's a steadiness and density to the sound that feels committed and full.";
+  } else if (s > 65 && a < 35) {
+    listenerEffect = "Wide, soft, and open — the mix creates space rather than filling it, which suits gentle or introspective material but may lack the urgency needed in louder contexts.";
+  } else if (a > 65) {
+    listenerEffect = "Sharp transients keep the listener's nervous system active — the mix feels crisp and alert, where individual hits and details register clearly even at low volumes.";
+  } else {
+    listenerEffect = "The overall balance sits comfortably in the center — nothing pulls hard in any one direction, which gives the mix versatility across different listening contexts.";
+  }
+
+  // --- Sentence 3: mastering impact (keyed to the most extreme axis) ---
+  const deviations = [
+    { axis: "presence", val: p, lo: "low", hi: "high" },
+    { axis: "attack",   val: a, lo: "low", hi: "high" },
+    { axis: "space",    val: s, lo: "low", hi: "high" },
+    { axis: "weight",   val: w, lo: "low", hi: "high" },
+  ];
+  const mostExtreme = deviations.reduce((best, cur) =>
+    Math.abs(cur.val - 50) > Math.abs(best.val - 50) ? cur : best
+  );
+  const direction = mostExtreme.val > 50 ? "high" : "low";
+
+  let masteringNote: string;
+  if (mostExtreme.axis === "presence" && direction === "high") {
+    masteringNote = "With the mix this forward, limiting is the most consequential mastering step — over-compressing will push the lead into harshness, so gain staging before the limiter matters more than usual.";
+  } else if (mostExtreme.axis === "presence" && direction === "low") {
+    masteringNote = "A gentle high-shelf lift in mastering (around 8–12kHz) could bring the lead forward without disrupting the spectral balance — or a touch of saturation to add presence without adding brightness.";
+  } else if (mostExtreme.axis === "attack" && direction === "high") {
+    masteringNote = "The sharp transients mean the limiter will engage on peaks frequently — a short transient shaper before limiting can soften the worst hits and allow a louder master without audible pumping.";
+  } else if (mostExtreme.axis === "attack" && direction === "low") {
+    masteringNote = "The soft transients leave room for transient enhancement in mastering — a gentle attack shaper can add front-end definition to the lead without over-brightening the high shelf.";
+  } else if (mostExtreme.axis === "space" && direction === "high") {
+    masteringNote = "The wide stereo field will narrow slightly in streaming loudness normalization and mono fold-down — the master should be checked in mono to ensure no critical elements cancel or collapse.";
+  } else if (mostExtreme.axis === "space" && direction === "low") {
+    masteringNote = "Mid-side processing in mastering could gently widen the stereo image — even a few percent of side-channel lift can open the mix considerably without introducing phase issues.";
+  } else if (mostExtreme.axis === "weight" && direction === "high") {
+    masteringNote = "The heavy low end will cause the limiter to work hardest on bass hits — a multiband approach, or high-passing the side channel before brick-walling, can prevent the sub from controlling the loudness ceiling.";
+  } else if (mostExtreme.axis === "weight" && direction === "low") {
+    masteringNote = "A low-shelf or sub-bass harmonic saturation in mastering can add warmth and body — this is especially useful if the mix will be heard on systems that can't reproduce deep sub frequencies.";
+  } else {
+    masteringNote = "With all axes close to center, the mix is in a balanced position going into mastering — modest limiting and EQ should be sufficient without any major corrective moves.";
+  }
+
+  return { character, listenerEffect, masteringNote };
 }
 
 function describeTonalBalance(s: SpectrumData): string {
@@ -193,16 +261,32 @@ export function SummaryCards({ analysis }: Props) {
       </div>
 
       {/* Emotional Read */}
-      <div className="rounded-2xl p-5 flex flex-col justify-between" style={cardStyle}>
+      <div className="rounded-2xl p-5" style={cardStyle}>
         <div className="flex items-center gap-2.5 mb-4">
           <IconBox color="violet">
             <Sparkles className="w-4 h-4 text-violet-600" />
           </IconBox>
           <p className="text-sm font-bold text-stone-900">Emotional Read</p>
         </div>
-        <p className="text-sm italic text-stone-700 leading-relaxed">
-          {generateEmotionalSummary(emotional)}
-        </p>
+        {(() => {
+          const { character, listenerEffect, masteringNote } = buildEmotionalParagraph(emotional);
+          return (
+            <div className="space-y-3">
+              <p className="text-sm italic font-medium text-stone-800 leading-relaxed">
+                {character}
+              </p>
+              <p className="text-xs text-stone-600 leading-relaxed">
+                {listenerEffect}
+              </p>
+              <div className="border-t border-stone-100 pt-3">
+                <p className="text-[10px] uppercase tracking-wider font-bold text-stone-500 mb-1.5">Mastering note</p>
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  {masteringNote}
+                </p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

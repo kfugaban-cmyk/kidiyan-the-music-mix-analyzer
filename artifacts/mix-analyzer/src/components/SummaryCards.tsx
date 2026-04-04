@@ -1,5 +1,40 @@
-import type { MixAnalysis, SpectrumData, DynamicsData } from "@/analysis/types";
+import type { MixAnalysis, SpectrumData, DynamicsData, EmotionalReadData } from "@/analysis/types";
 import { AlertTriangle, Activity, Headphones, Sparkles } from "lucide-react";
+
+function generateEmotionalSummary(e: EmotionalReadData): string {
+  const p = e.presence.value;   // recessed (0) → upfront (100)
+  const a = e.attack.value;     // rounded (0) → cutting (100)
+  const s = e.space.value;      // dry (0) → open (100)
+  const w = e.weight.value;     // airy (0) → heavy (100)
+
+  // Opening clause — overall character (presence × space)
+  let opening: string;
+  if (p < 35 && s < 35)       opening = "close and dry";
+  else if (p < 35 && s > 65)  opening = "distant but open";
+  else if (p < 35)             opening = "slightly withdrawn";
+  else if (p > 65 && s > 65)  opening = "open and upfront";
+  else if (p > 65 && s < 35)  opening = "close and direct";
+  else if (p > 65)             opening = "forward and present";
+  else if (s > 65)             opening = "settled and spacious";
+  else if (s < 35)             opening = "intimate and focused";
+  else                         opening = "centered and even";
+
+  // Second clause — texture and body (attack × weight)
+  let texture: string;
+  if (a < 35 && w < 35)       texture = "a light, feathery touch with very little body";
+  else if (a < 35 && w > 65)  texture = "smooth transients and a heavy, grounded bottom";
+  else if (a < 35 && w > 45)  texture = "rounded edges and a solid, full body";
+  else if (a < 35)             texture = "a soft, unhurried edge and an airy frame";
+  else if (a > 65 && w > 65)  texture = "crisp attack and dense, weighty low end";
+  else if (a > 65 && w < 35)  texture = "a cutting edge but a lean, thin body";
+  else if (a > 65 && w > 45)  texture = "sharp transients and a grounded, full presence";
+  else if (a > 65)             texture = "a defined, punchy edge with controlled weight";
+  else if (w > 65)             texture = "measured movement and a heavy, grounded body";
+  else if (w < 35)             texture = "gentle definition and a lean, airy frame";
+  else                         texture = "balanced weight and a measured, even edge";
+
+  return `${opening}, with ${texture}`;
+}
 
 function describeTonalBalance(s: SpectrumData): string {
   const { sub, lowMid, mid, high, label } = s;
@@ -75,39 +110,6 @@ function IconBox({ children, color }: { children: React.ReactNode; color: "viole
   );
 }
 
-function AxisRow({ name, left, right, value }: { name: string; left: string; right: string; value: number }) {
-  const isRight = value > 50;
-  return (
-    <div className="space-y-1.5">
-      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">{name}</p>
-      <div className="flex items-center gap-2">
-        <span className={`text-xs w-14 text-right transition-colors ${!isRight ? "text-stone-800 font-semibold" : "text-stone-400"}`}>
-          {left}
-        </span>
-        <div className="relative flex-1 h-1.5 rounded-full overflow-visible" style={{ background: "hsl(263 20% 91%)" }}>
-          <div
-            className="absolute top-0 h-full rounded-full transition-all duration-700 ease-out"
-            style={{
-              width: `${value}%`,
-              background: "linear-gradient(to right, hsl(263 45% 70%), hsl(263 65% 54%))",
-            }}
-          />
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-white transition-all duration-700 ease-out"
-            style={{
-              left: `calc(${value}% - 6px)`,
-              background: "hsl(263 65% 56%)",
-              boxShadow: "0 1px 4px hsl(263 50% 50% / 0.4)",
-            }}
-          />
-        </div>
-        <span className={`text-xs w-10 transition-colors ${isRight ? "text-stone-800 font-semibold" : "text-stone-400"}`}>
-          {right}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 const cardStyle = {
   background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)",
@@ -191,19 +193,16 @@ export function SummaryCards({ analysis }: Props) {
       </div>
 
       {/* Emotional Read */}
-      <div className="rounded-2xl p-5" style={cardStyle}>
+      <div className="rounded-2xl p-5 flex flex-col justify-between" style={cardStyle}>
         <div className="flex items-center gap-2.5 mb-4">
           <IconBox color="violet">
             <Sparkles className="w-4 h-4 text-violet-600" />
           </IconBox>
           <p className="text-sm font-bold text-stone-900">Emotional Read</p>
         </div>
-        <div className="space-y-4">
-          <AxisRow name="Presence" left="recessed" right="upfront" value={emotional.presence.value} />
-          <AxisRow name="Attack" left="rounded" right="cutting" value={emotional.attack.value} />
-          <AxisRow name="Space" left="dry" right="open" value={emotional.space.value} />
-          <AxisRow name="Weight" left="airy" right="heavy" value={emotional.weight.value} />
-        </div>
+        <p className="text-sm italic text-stone-700 leading-relaxed">
+          {generateEmotionalSummary(emotional)}
+        </p>
       </div>
     </div>
   );

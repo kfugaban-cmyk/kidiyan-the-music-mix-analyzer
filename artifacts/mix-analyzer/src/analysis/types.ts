@@ -40,7 +40,7 @@ export interface EmotionalReadData {
 }
 
 export interface TranslationRiskData {
-  label: "mono-safe" | "low-end risk" | "stereo risk" | "harshness risk" | "multiple risks";
+  label: "translates well" | "low-end risk" | "stereo risk" | "harshness risk" | "multiple risks";
   risk: "low" | "medium" | "high";
   details: string[];
 }

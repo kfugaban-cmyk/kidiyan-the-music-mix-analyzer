@@ -108,36 +108,84 @@ export function analyzeTranslationRisk(
   stereo: StereoWidthData,
   dynamics: DynamicsData
 ): TranslationRiskData {
-  const risks: string[] = [];
+  // Each device contributes exactly one observation, flagging a problem
+  // where one exists, or confirming safety when it doesn't.
 
-  if (spectrum.sub > 70) risks.push("Heavy sub-bass may not translate on small speakers");
-  if (stereo.widthScore < 10) risks.push("Very narrow stereo field — check mono compatibility");
-  if (stereo.widthScore > 80) risks.push("Extreme stereo width may collapse in mono");
-  if (spectrum.high > 75) risks.push("Harsh high-frequency content may cause listener fatigue");
-  if (dynamics.crestFactor < 6) risks.push("Heavy limiting — little dynamic headroom remaining");
+  // --- Phone speakers (small drivers, limited bass extension, mono-ish) ---
+  let phoneNote: string;
+  let phoneIssue = false;
+  if (spectrum.sub > 58) {
+    phoneNote = "low-end energy will likely disappear on phone speakers — the sub weight won't carry";
+    phoneIssue = true;
+  } else if (spectrum.high > 65) {
+    phoneNote = "top end may feel harsh and brittle through phone speakers without a proper tweeter";
+    phoneIssue = true;
+  } else if (spectrum.mid < 28 && spectrum.sub > 40) {
+    phoneNote = "vocal clarity may suffer on phone speakers — the mid presence is low relative to the bass";
+    phoneIssue = true;
+  } else if (spectrum.sub < 18 && spectrum.lowMid < 28) {
+    phoneNote = "the mix is already light on low-end, so phone speakers won't lose much body";
+  } else {
+    phoneNote = "mid-range clarity should hold up reasonably well on phone speakers";
+  }
+
+  // --- Headphones (detailed, intimate, full stereo field) ---
+  let headphoneNote: string;
+  let headphoneIssue = false;
+  if (stereo.widthScore > 72) {
+    headphoneNote = "the wide stereo field may feel exaggerated or disorienting on headphones";
+    headphoneIssue = true;
+  } else if (stereo.widthScore < 12) {
+    headphoneNote = "the narrow stereo field may feel flat and unengaging on headphones";
+    headphoneIssue = true;
+  } else if (spectrum.high > 65) {
+    headphoneNote = "high frequencies may feel sharper and more exposed on headphones";
+    headphoneIssue = true;
+  } else if (dynamics.crestFactor > 18) {
+    headphoneNote = "dynamic swings may feel dramatic in quiet listening on headphones";
+    headphoneIssue = true;
+  } else {
+    headphoneNote = "stereo balance and dynamics should translate comfortably on headphones";
+  }
+
+  // --- Car speakers (bass resonance, road noise, extended listening) ---
+  let carNote: string;
+  let carIssue = false;
+  if (spectrum.sub > 65) {
+    carNote = "bass may build up and sound boomy through car speakers — the sub is already heavy";
+    carIssue = true;
+  } else if (dynamics.crestFactor > 16) {
+    carNote = "vocals may sit behind road noise — the dynamic range is wide enough to get lost in a car";
+    carIssue = true;
+  } else if (spectrum.sub < 18 && spectrum.lowMid < 28) {
+    carNote = "the mix may feel very thin in a car — car resonance may overemphasize what little low-end there is";
+    carIssue = true;
+  } else if (dynamics.crestFactor < 7) {
+    carNote = "the compressed dynamics should cut through road noise without getting lost";
+  } else if (spectrum.mid > 55) {
+    carNote = "strong midrange presence should help the mix cut through road noise";
+  } else {
+    carNote = "should translate reasonably on a standard car system";
+  }
+
+  const details = [phoneNote, headphoneNote, carNote];
+  const issueCount = [phoneIssue, headphoneIssue, carIssue].filter(Boolean).length;
+
+  const risk: TranslationRiskData["risk"] =
+    issueCount === 0 ? "low" : issueCount === 1 ? "medium" : "high";
 
   let label: TranslationRiskData["label"];
-  let risk: TranslationRiskData["risk"];
-
-  if (risks.length === 0) {
-    label = "mono-safe";
-    risk = "low";
-  } else if (risks.length === 1) {
-    if (risks[0].includes("sub-bass")) label = "low-end risk";
-    else if (risks[0].includes("stereo") || risks[0].includes("narrow")) label = "stereo risk";
-    else label = "harshness risk";
-    risk = "medium";
+  if (issueCount === 0) {
+    label = "translates well";
+  } else if (phoneIssue && (spectrum.sub > 58 || (spectrum.sub < 18 && spectrum.lowMid < 28))) {
+    label = carIssue || headphoneIssue ? "multiple risks" : "low-end risk";
+  } else if (headphoneIssue && (stereo.widthScore > 72 || stereo.widthScore < 12)) {
+    label = carIssue || phoneIssue ? "multiple risks" : "stereo risk";
+  } else if (headphoneIssue && spectrum.high > 65) {
+    label = carIssue || phoneIssue ? "multiple risks" : "harshness risk";
   } else {
-    label = "multiple risks";
-    risk = "high";
-    if (!risks.some(r => r.includes("sub"))) {
-      risks.unshift("Check low-end translation on consumer speakers");
-    }
+    label = issueCount > 1 ? "multiple risks" : "translates well";
   }
 
-  if (risks.length === 0) {
-    risks.push("Mix looks safe across formats");
-  }
-
-  return { label, risk, details: risks };
+  return { label, risk, details };
 }

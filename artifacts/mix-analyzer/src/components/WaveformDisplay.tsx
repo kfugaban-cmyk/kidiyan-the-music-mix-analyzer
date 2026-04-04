@@ -15,9 +15,9 @@ export function WaveformDisplay({ data }: Props) {
   const effectiveBar = barWidth - gap;
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-100 p-4 shadow-sm">
-      <p className="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3">Waveform</p>
-      <div className="w-full overflow-hidden rounded-lg" style={{ background: "hsl(250 30% 98%)" }}>
+    <div className="rounded-2xl p-4" style={{ background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)", boxShadow: "0 1px 3px hsl(263 30% 30% / 0.06), 0 0 0 1px hsl(263 20% 92%)" }}>
+      <p className="text-xs font-medium text-stone-400 uppercase tracking-widest mb-3">Waveform</p>
+      <div className="w-full overflow-hidden rounded-xl" style={{ background: "linear-gradient(180deg, hsl(263 30% 97%) 0%, hsl(263 25% 99%) 100%)" }}>
         <svg
           viewBox={`0 0 ${width} ${height}`}
           preserveAspectRatio="none"

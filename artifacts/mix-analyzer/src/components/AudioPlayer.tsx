@@ -47,7 +47,7 @@ export function AudioPlayer({ file }: Props) {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-100 p-4 shadow-sm">
+    <div className="rounded-2xl p-4" style={{ background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)", boxShadow: "0 1px 3px hsl(263 30% 30% / 0.06), 0 0 0 1px hsl(263 20% 92%)" }}>
       <audio
         ref={audioRef}
         src={url || undefined}
@@ -59,7 +59,8 @@ export function AudioPlayer({ file }: Props) {
       <div className="flex items-center gap-3">
         <button
           onClick={togglePlay}
-          className="flex items-center justify-center w-10 h-10 rounded-full bg-violet-500 hover:bg-violet-600 text-white transition-colors flex-shrink-0 shadow-sm"
+          className="flex items-center justify-center w-10 h-10 rounded-full text-white transition-all flex-shrink-0 hover:scale-105 active:scale-95"
+          style={{ background: "linear-gradient(135deg, hsl(263 65% 62%) 0%, hsl(280 60% 55%) 100%)", boxShadow: "0 2px 10px hsl(263 60% 60% / 0.35), 0 1px 3px hsl(263 50% 40% / 0.2)" }}
         >
           {isPlaying
             ? <Pause className="w-4 h-4" />
@@ -70,16 +71,17 @@ export function AudioPlayer({ file }: Props) {
         <div className="flex-1 min-w-0">
           <p className="text-xs font-medium text-stone-600 truncate mb-2">{file.name}</p>
           <div
-            className="relative h-1.5 bg-stone-100 rounded-full cursor-pointer group"
+            className="relative h-1.5 rounded-full cursor-pointer group"
+            style={{ background: "hsl(263 20% 93%)" }}
             onClick={seek}
           >
             <div
-              className="absolute left-0 top-0 h-full bg-violet-400 rounded-full transition-all"
-              style={{ width: `${progress}%` }}
+              className="absolute left-0 top-0 h-full rounded-full transition-all"
+              style={{ width: `${progress}%`, background: "linear-gradient(to right, hsl(263 45% 72%), hsl(263 65% 56%))" }}
             />
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-violet-500 rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity"
-              style={{ left: `calc(${progress}% - 6px)` }}
+              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-white opacity-0 group-hover:opacity-100 transition-opacity"
+              style={{ left: `calc(${progress}% - 6px)`, background: "hsl(263 65% 58%)", boxShadow: "0 1px 4px hsl(263 50% 50% / 0.4)" }}
             />
           </div>
           <div className="flex justify-between mt-1">

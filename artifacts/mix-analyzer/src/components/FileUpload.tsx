@@ -39,14 +39,19 @@ export function FileUpload({ onFile, isAnalyzing }: Props) {
     <label
       className={`
         relative flex flex-col items-center justify-center gap-4
-        w-full min-h-48 rounded-2xl border-2 border-dashed cursor-pointer
+        w-full min-h-52 rounded-2xl border-2 border-dashed cursor-pointer
         transition-all duration-200
         ${isDragging
-          ? "border-violet-400 bg-violet-50 scale-[1.01]"
-          : "border-stone-200 bg-stone-50 hover:border-violet-300 hover:bg-violet-50/50"
+          ? "border-violet-400 scale-[1.01]"
+          : "border-stone-200 hover:border-violet-300"
         }
         ${isAnalyzing ? "pointer-events-none opacity-60" : ""}
       `}
+      style={{
+        background: isDragging
+          ? "linear-gradient(135deg, hsl(263 60% 97%) 0%, hsl(280 50% 97%) 100%)"
+          : "linear-gradient(135deg, hsl(36 20% 98%) 0%, hsl(263 30% 97%) 100%)",
+      }}
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={onDrop}
@@ -58,16 +63,20 @@ export function FileUpload({ onFile, isAnalyzing }: Props) {
         onChange={onInputChange}
         disabled={isAnalyzing}
       />
+
       <div className={`
-        flex items-center justify-center w-14 h-14 rounded-full
-        transition-colors duration-200
-        ${isDragging ? "bg-violet-100" : "bg-white shadow-sm border border-stone-100"}
-      `}>
+        relative flex items-center justify-center w-14 h-14 rounded-2xl
+        transition-all duration-200
+        ${isDragging ? "scale-110" : ""}
+      `}
+        style={{ background: "linear-gradient(135deg, hsl(263 50% 96%) 0%, hsl(280 45% 94%) 100%)", boxShadow: "0 2px 12px hsl(263 40% 70% / 0.18), 0 0 0 1px hsl(263 40% 85% / 0.4)" }}
+      >
         {isAnalyzing
           ? <div className="w-5 h-5 border-2 border-violet-400 border-t-transparent rounded-full animate-spin" />
-          : <Music className="w-6 h-6 text-violet-400" />
+          : <Music className="w-6 h-6 text-violet-500" />
         }
       </div>
+
       <div className="text-center">
         <p className="text-sm font-medium text-stone-700">
           {isAnalyzing ? "Analyzing your mix…" : "Drop your mix here"}
@@ -76,8 +85,12 @@ export function FileUpload({ onFile, isAnalyzing }: Props) {
           {isAnalyzing ? "This takes a moment" : "WAV or MP3 · Click to browse"}
         </p>
       </div>
+
       {!isAnalyzing && (
-        <div className="flex items-center gap-2 text-xs text-violet-400 font-medium">
+        <div
+          className="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full transition-colors text-violet-600"
+          style={{ background: "hsl(263 60% 96%)", boxShadow: "0 0 0 1px hsl(263 40% 88%)" }}
+        >
           <Upload className="w-3 h-3" />
           <span>Upload file</span>
         </div>

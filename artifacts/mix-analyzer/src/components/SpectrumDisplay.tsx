@@ -13,9 +13,9 @@ const BANDS = [
 
 export function SpectrumDisplay({ data }: Props) {
   return (
-    <div className="bg-white rounded-2xl border border-stone-100 p-4 shadow-sm">
-      <p className="text-xs font-medium text-stone-400 uppercase tracking-wide mb-4">Tonal Balance</p>
-      <div className="space-y-3">
+    <div className="rounded-2xl p-4" style={{ background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)", boxShadow: "0 1px 3px hsl(263 30% 30% / 0.06), 0 0 0 1px hsl(263 20% 92%)" }}>
+      <p className="text-xs font-medium text-stone-400 uppercase tracking-widest mb-4">Tonal Balance</p>
+      <div className="space-y-3.5">
         {BANDS.map(({ key, label, range, color }) => {
           const value = data[key];
           return (
@@ -24,16 +24,16 @@ export function SpectrumDisplay({ data }: Props) {
                 <p className="text-xs font-medium text-stone-600">{label}</p>
                 <p className="text-[10px] text-stone-400">{range}</p>
               </div>
-              <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
+              <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: "hsl(263 20% 93%)" }}>
                 <div
                   className="h-full rounded-full transition-all duration-700 ease-out"
                   style={{
                     width: `${value}%`,
-                    background: color,
+                    background: `linear-gradient(to right, ${color}, ${color.replace(")", " / 0.7)").replace("hsl(", "hsl(")})`,
                   }}
                 />
               </div>
-              <span className="text-xs text-stone-400 w-8 text-right">{value}%</span>
+              <span className="text-xs text-stone-400 tabular-nums w-8 text-right">{value}%</span>
             </div>
           );
         })}

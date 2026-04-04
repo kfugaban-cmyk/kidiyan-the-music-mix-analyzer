@@ -8,38 +8,67 @@ interface Props {
 function ScoreDot({ score, risk }: { score?: number; risk?: "low" | "medium" | "high" }) {
   if (risk !== undefined) {
     const color = risk === "low" ? "bg-emerald-400" : risk === "medium" ? "bg-amber-400" : "bg-rose-400";
-    return <div className={`w-2 h-2 rounded-full ${color}`} />;
+    return <div className={`w-2 h-2 rounded-full ${color} shadow-sm`} />;
   }
   if (score !== undefined) {
     const color = score > 60 ? "bg-emerald-400" : score > 30 ? "bg-amber-400" : "bg-rose-400";
-    return <div className={`w-2 h-2 rounded-full ${color}`} />;
+    return <div className={`w-2 h-2 rounded-full ${color} shadow-sm`} />;
   }
   return null;
 }
 
 function LabelPill({ label }: { label: string }) {
   return (
-    <span className="inline-block px-2.5 py-0.5 bg-violet-50 text-violet-600 text-xs font-medium rounded-full">
+    <span
+      className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-full text-violet-600"
+      style={{ background: "hsl(263 60% 96%)", boxShadow: "0 0 0 1px hsl(263 40% 88%)" }}
+    >
       {label}
     </span>
   );
 }
 
+function IconBox({ children, color }: { children: React.ReactNode; color: "violet" | "amber" }) {
+  return (
+    <div
+      className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+      style={
+        color === "violet"
+          ? { background: "linear-gradient(135deg, hsl(263 55% 95%) 0%, hsl(280 50% 93%) 100%)", boxShadow: "0 0 0 1px hsl(263 40% 88%)" }
+          : { background: "linear-gradient(135deg, hsl(40 100% 95%) 0%, hsl(35 90% 92%) 100%)", boxShadow: "0 0 0 1px hsl(40 60% 86%)" }
+      }
+    >
+      {children}
+    </div>
+  );
+}
+
 function AxisRow({ name, left, right, value }: { name: string; left: string; right: string; value: number }) {
   return (
-    <div className="space-y-1">
-      <p className="text-[10px] uppercase tracking-wider text-stone-400 font-medium">{name}</p>
+    <div className="space-y-1.5">
+      <p className="text-[10px] uppercase tracking-widest text-stone-400 font-medium">{name}</p>
       <div className="flex items-center gap-2">
-        <span className={`text-xs w-14 text-right transition-colors ${value <= 50 ? "text-stone-700 font-medium" : "text-stone-300"}`}>
+        <span className={`text-xs w-14 text-right transition-colors ${value <= 50 ? "text-stone-600 font-medium" : "text-stone-300"}`}>
           {left}
         </span>
-        <div className="relative flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+        <div className="relative flex-1 h-1.5 rounded-full overflow-visible" style={{ background: "hsl(263 20% 93%)" }}>
           <div
-            className="absolute top-0 h-full bg-violet-300 rounded-full transition-all duration-700"
-            style={{ width: `${value}%` }}
+            className="absolute top-0 h-full rounded-full transition-all duration-700 ease-out"
+            style={{
+              width: `${value}%`,
+              background: "linear-gradient(to right, hsl(263 45% 72%), hsl(263 65% 56%))",
+            }}
+          />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-white transition-all duration-700 ease-out"
+            style={{
+              left: `calc(${value}% - 6px)`,
+              background: "hsl(263 65% 58%)",
+              boxShadow: "0 1px 4px hsl(263 50% 50% / 0.35)",
+            }}
           />
         </div>
-        <span className={`text-xs w-10 transition-colors ${value > 50 ? "text-stone-700 font-medium" : "text-stone-300"}`}>
+        <span className={`text-xs w-10 transition-colors ${value > 50 ? "text-stone-600 font-medium" : "text-stone-300"}`}>
           {right}
         </span>
       </div>
@@ -47,17 +76,22 @@ function AxisRow({ name, left, right, value }: { name: string; left: string; rig
   );
 }
 
+const cardStyle = {
+  background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)",
+  boxShadow: "0 1px 3px hsl(263 30% 30% / 0.06), 0 0 0 1px hsl(263 20% 92%)",
+};
+
 export function SummaryCards({ analysis }: Props) {
   const { spectrum, dynamics, translation, emotional } = analysis;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm">
+      <div className="rounded-2xl p-5" style={cardStyle}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center">
+            <IconBox color="violet">
               <Activity className="w-4 h-4 text-violet-500" />
-            </div>
+            </IconBox>
             <div>
               <p className="text-sm font-semibold text-stone-700">Tonal Balance</p>
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -82,12 +116,12 @@ export function SummaryCards({ analysis }: Props) {
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm">
+      <div className="rounded-2xl p-5" style={cardStyle}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center">
+            <IconBox color="violet">
               <Headphones className="w-4 h-4 text-violet-500" />
-            </div>
+            </IconBox>
             <div>
               <p className="text-sm font-semibold text-stone-700">Dynamic Feel</p>
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -110,12 +144,12 @@ export function SummaryCards({ analysis }: Props) {
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm">
+      <div className="rounded-2xl p-5" style={cardStyle}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center">
+            <IconBox color="amber">
               <AlertTriangle className="w-4 h-4 text-amber-500" />
-            </div>
+            </IconBox>
             <div>
               <p className="text-sm font-semibold text-stone-700">Translation Risk</p>
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -126,21 +160,21 @@ export function SummaryCards({ analysis }: Props) {
           </div>
           <LabelPill label={translation.label} />
         </div>
-        <ul className="space-y-1">
+        <ul className="space-y-1.5">
           {translation.details.map((d, i) => (
-            <li key={i} className="text-xs text-stone-500 flex gap-1.5">
-              <span className="text-stone-300 mt-px">·</span>
+            <li key={i} className="text-xs text-stone-500 flex gap-2">
+              <span className="text-violet-300 mt-px flex-shrink-0">·</span>
               <span>{d}</span>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="bg-white rounded-2xl border border-stone-100 p-5 shadow-sm">
+      <div className="rounded-2xl p-5" style={cardStyle}>
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center">
+          <IconBox color="violet">
             <Sparkles className="w-4 h-4 text-violet-500" />
-          </div>
+          </IconBox>
           <p className="text-sm font-semibold text-stone-700">Emotional Read</p>
         </div>
         <div className="space-y-4">

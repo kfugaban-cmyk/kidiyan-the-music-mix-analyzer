@@ -38,12 +38,17 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <header className="sticky top-0 z-10 bg-stone-50/80 backdrop-blur-sm border-b border-stone-100">
+    <div className="min-h-screen" style={{ background: "radial-gradient(ellipse 110% 45% at 50% -2%, hsl(263 35% 95%) 0%, hsl(36 20% 97%) 60%)" }}>
+      <header className="sticky top-0 z-10 backdrop-blur-sm border-b border-stone-100/80" style={{ background: "hsl(36 20% 97% / 0.85)" }}>
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-base font-semibold text-stone-800 tracking-tight">Mix Analyzer</h1>
-            <p className="text-xs text-stone-400 mt-0.5">Mix character · not just levels</p>
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-violet-500 flex items-center justify-center shadow-sm shadow-violet-200">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7 Q3 3 5 7 Q7 11 9 7 Q11 3 13 7" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+            </div>
+            <div>
+              <h1 className="text-sm font-semibold text-stone-800 tracking-tight">Mix Analyzer</h1>
+              <p className="text-[10px] text-stone-400 tracking-wide">Mix character · not just levels</p>
+            </div>
           </div>
           {file && (
             <button
@@ -59,12 +64,12 @@ export default function Dashboard() {
       <main className="max-w-3xl mx-auto px-4 py-8 space-y-5">
         {!file ? (
           <div className="space-y-6">
-            <div className="text-center pt-8 pb-4">
-              <h2 className="text-2xl font-semibold text-stone-800 tracking-tight">
+            <div className="text-center pt-10 pb-4">
+              <h2 className="text-3xl font-semibold text-stone-800 tracking-tight leading-tight">
                 How does your mix feel?
               </h2>
-              <p className="text-sm text-stone-400 mt-2 max-w-sm mx-auto leading-relaxed">
-                Upload a stereo mix to get a snapshot of its tonal character, dynamics, and emotional read.
+              <p className="text-sm text-stone-400 mt-3 max-w-xs mx-auto leading-relaxed">
+                Upload a stereo mix — get a snapshot of its character, not just its levels.
               </p>
             </div>
             <FileUpload onFile={handleFile} isAnalyzing={isAnalyzing} />
@@ -103,7 +108,10 @@ export default function Dashboard() {
                 <DynamicsDisplay data={analysis.dynamics} />
 
                 <div>
-                  <p className="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3 px-1">Summary</p>
+                  <div className="flex items-center gap-3 mb-3 px-1">
+                    <p className="text-xs font-medium text-stone-400 uppercase tracking-widest">Summary</p>
+                    <div className="flex-1 h-px bg-gradient-to-r from-stone-200 to-transparent" />
+                  </div>
                   <SummaryCards analysis={analysis} />
                 </div>
               </>

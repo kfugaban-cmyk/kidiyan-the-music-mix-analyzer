@@ -39,21 +39,21 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen" style={{ background: "radial-gradient(ellipse 110% 45% at 50% -2%, hsl(263 35% 95%) 0%, hsl(36 20% 97%) 60%)" }}>
-      <header className="sticky top-0 z-10 backdrop-blur-sm border-b border-stone-100/80" style={{ background: "hsl(36 20% 97% / 0.85)" }}>
+      <header className="sticky top-0 z-10 backdrop-blur-sm border-b border-stone-200/60" style={{ background: "hsl(36 20% 97% / 0.9)" }}>
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-lg bg-violet-500 flex items-center justify-center shadow-sm shadow-violet-200">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7 Q3 3 5 7 Q7 11 9 7 Q11 3 13 7" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
             </div>
             <div>
-              <h1 className="text-sm font-semibold text-stone-800 tracking-tight">Mix Analyzer</h1>
-              <p className="text-[10px] text-stone-400 tracking-wide">Mix character · not just levels</p>
+              <h1 className="text-sm font-bold text-stone-900 tracking-tight">Mix Analyzer</h1>
+              <p className="text-[10px] text-stone-500 tracking-wide">Mix character · not just levels</p>
             </div>
           </div>
           {file && (
             <button
               onClick={reset}
-              className="text-xs text-stone-400 hover:text-stone-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-stone-100"
+              className="text-xs font-medium text-stone-500 hover:text-stone-800 transition-colors px-3 py-1.5 rounded-lg hover:bg-stone-100"
             >
               New file
             </button>
@@ -65,10 +65,10 @@ export default function Dashboard() {
         {!file ? (
           <div className="space-y-6">
             <div className="text-center pt-10 pb-4">
-              <h2 className="text-3xl font-semibold text-stone-800 tracking-tight leading-tight">
+              <h2 className="text-3xl font-bold text-stone-900 tracking-tight leading-tight">
                 How does your mix feel?
               </h2>
-              <p className="text-sm text-stone-400 mt-3 max-w-xs mx-auto leading-relaxed">
+              <p className="text-sm text-stone-500 mt-3 max-w-xs mx-auto leading-relaxed">
                 Upload a stereo mix — get a snapshot of its character, not just its levels.
               </p>
             </div>
@@ -79,8 +79,8 @@ export default function Dashboard() {
             <FileUpload onFile={handleFile} isAnalyzing={isAnalyzing} />
 
             {error && (
-              <div className="bg-rose-50 border border-rose-100 rounded-2xl p-4">
-                <p className="text-sm text-rose-600">{error}</p>
+              <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4">
+                <p className="text-sm font-medium text-rose-700">{error}</p>
               </div>
             )}
 
@@ -109,8 +109,8 @@ export default function Dashboard() {
 
                 <div>
                   <div className="flex items-center gap-3 mb-3 px-1">
-                    <p className="text-xs font-medium text-stone-400 uppercase tracking-widest">Summary</p>
-                    <div className="flex-1 h-px bg-gradient-to-r from-stone-200 to-transparent" />
+                    <p className="text-xs font-bold text-stone-600 uppercase tracking-widest">Summary</p>
+                    <div className="flex-1 h-px bg-gradient-to-r from-stone-300 to-transparent" />
                   </div>
                   <SummaryCards analysis={analysis} />
                 </div>

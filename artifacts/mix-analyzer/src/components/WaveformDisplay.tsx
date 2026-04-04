@@ -15,8 +15,8 @@ export function WaveformDisplay({ data }: Props) {
   const effectiveBar = barWidth - gap;
 
   return (
-    <div className="rounded-2xl p-4" style={{ background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)", boxShadow: "0 1px 3px hsl(263 30% 30% / 0.06), 0 0 0 1px hsl(263 20% 92%)" }}>
-      <p className="text-xs font-medium text-stone-400 uppercase tracking-widest mb-3">Waveform</p>
+    <div className="rounded-2xl p-4" style={{ background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)", boxShadow: "0 1px 3px hsl(263 30% 30% / 0.07), 0 0 0 1px hsl(263 20% 90%)" }}>
+      <p className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-3">Waveform</p>
       <div className="w-full overflow-hidden rounded-xl" style={{ background: "linear-gradient(180deg, hsl(263 30% 97%) 0%, hsl(263 25% 99%) 100%)" }}>
         <svg
           viewBox={`0 0 ${width} ${height}`}
@@ -26,8 +26,8 @@ export function WaveformDisplay({ data }: Props) {
         >
           <defs>
             <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(263 60% 70%)" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="hsl(263 60% 70%)" stopOpacity="0.3" />
+              <stop offset="0%" stopColor="hsl(263 60% 62%)" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="hsl(263 60% 62%)" stopOpacity="0.25" />
             </linearGradient>
           </defs>
           {Array.from(peaks).map((peak, i) => {

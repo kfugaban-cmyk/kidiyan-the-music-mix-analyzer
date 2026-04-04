@@ -78,18 +78,18 @@ export function FileUpload({ onFile, isAnalyzing }: Props) {
       </div>
 
       <div className="text-center">
-        <p className="text-sm font-medium text-stone-700">
+        <p className="text-sm font-semibold text-stone-800">
           {isAnalyzing ? "Analyzing your mix…" : "Drop your mix here"}
         </p>
-        <p className="text-xs text-stone-400 mt-1">
+        <p className="text-xs text-stone-500 mt-1">
           {isAnalyzing ? "This takes a moment" : "WAV or MP3 · Click to browse"}
         </p>
       </div>
 
       {!isAnalyzing && (
         <div
-          className="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full transition-colors text-violet-600"
-          style={{ background: "hsl(263 60% 96%)", boxShadow: "0 0 0 1px hsl(263 40% 88%)" }}
+          className="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors text-violet-700"
+          style={{ background: "hsl(263 60% 95%)", boxShadow: "0 0 0 1px hsl(263 40% 85%)" }}
         >
           <Upload className="w-3 h-3" />
           <span>Upload file</span>

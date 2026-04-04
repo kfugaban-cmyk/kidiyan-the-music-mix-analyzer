@@ -16,7 +16,6 @@ function describeTonalBalance(s: SpectrumData): string {
   if (label === "thin") {
     return `Low-end energy is very sparse — sub at ${sub}%, low-mids at ${lowMid}%. The mix may lack body and fullness, especially on anything with bass drivers or subwoofers.`;
   }
-  // balanced
   return `Spread is fairly even — sub ${sub}%, low-mids ${lowMid}%, mids ${mid}%, highs ${high}%. No single band is dominating, which gives the mix flexibility across playback systems.`;
 }
 
@@ -40,12 +39,12 @@ interface Props {
 
 function ScoreDot({ score, risk }: { score?: number; risk?: "low" | "medium" | "high" }) {
   if (risk !== undefined) {
-    const color = risk === "low" ? "bg-emerald-400" : risk === "medium" ? "bg-amber-400" : "bg-rose-400";
-    return <div className={`w-2 h-2 rounded-full ${color} shadow-sm`} />;
+    const color = risk === "low" ? "bg-emerald-500" : risk === "medium" ? "bg-amber-500" : "bg-rose-500";
+    return <div className={`w-2 h-2 rounded-full ${color}`} />;
   }
   if (score !== undefined) {
-    const color = score > 60 ? "bg-emerald-400" : score > 30 ? "bg-amber-400" : "bg-rose-400";
-    return <div className={`w-2 h-2 rounded-full ${color} shadow-sm`} />;
+    const color = score > 60 ? "bg-emerald-500" : score > 30 ? "bg-amber-500" : "bg-rose-500";
+    return <div className={`w-2 h-2 rounded-full ${color}`} />;
   }
   return null;
 }
@@ -53,8 +52,8 @@ function ScoreDot({ score, risk }: { score?: number; risk?: "low" | "medium" | "
 function LabelPill({ label }: { label: string }) {
   return (
     <span
-      className="inline-block px-2.5 py-0.5 text-xs font-medium rounded-full text-violet-600"
-      style={{ background: "hsl(263 60% 96%)", boxShadow: "0 0 0 1px hsl(263 40% 88%)" }}
+      className="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full text-violet-700"
+      style={{ background: "hsl(263 60% 95%)", boxShadow: "0 0 0 1px hsl(263 40% 85%)" }}
     >
       {label}
     </span>
@@ -67,8 +66,8 @@ function IconBox({ children, color }: { children: React.ReactNode; color: "viole
       className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
       style={
         color === "violet"
-          ? { background: "linear-gradient(135deg, hsl(263 55% 95%) 0%, hsl(280 50% 93%) 100%)", boxShadow: "0 0 0 1px hsl(263 40% 88%)" }
-          : { background: "linear-gradient(135deg, hsl(40 100% 95%) 0%, hsl(35 90% 92%) 100%)", boxShadow: "0 0 0 1px hsl(40 60% 86%)" }
+          ? { background: "linear-gradient(135deg, hsl(263 55% 94%) 0%, hsl(280 50% 92%) 100%)", boxShadow: "0 0 0 1px hsl(263 40% 86%)" }
+          : { background: "linear-gradient(135deg, hsl(40 100% 94%) 0%, hsl(35 90% 91%) 100%)", boxShadow: "0 0 0 1px hsl(40 60% 84%)" }
       }
     >
       {children}
@@ -77,31 +76,32 @@ function IconBox({ children, color }: { children: React.ReactNode; color: "viole
 }
 
 function AxisRow({ name, left, right, value }: { name: string; left: string; right: string; value: number }) {
+  const isRight = value > 50;
   return (
     <div className="space-y-1.5">
-      <p className="text-[10px] uppercase tracking-widest text-stone-400 font-medium">{name}</p>
+      <p className="text-[10px] uppercase tracking-wider text-stone-500 font-semibold">{name}</p>
       <div className="flex items-center gap-2">
-        <span className={`text-xs w-14 text-right transition-colors ${value <= 50 ? "text-stone-600 font-medium" : "text-stone-300"}`}>
+        <span className={`text-xs w-14 text-right transition-colors ${!isRight ? "text-stone-800 font-semibold" : "text-stone-400"}`}>
           {left}
         </span>
-        <div className="relative flex-1 h-1.5 rounded-full overflow-visible" style={{ background: "hsl(263 20% 93%)" }}>
+        <div className="relative flex-1 h-1.5 rounded-full overflow-visible" style={{ background: "hsl(263 20% 91%)" }}>
           <div
             className="absolute top-0 h-full rounded-full transition-all duration-700 ease-out"
             style={{
               width: `${value}%`,
-              background: "linear-gradient(to right, hsl(263 45% 72%), hsl(263 65% 56%))",
+              background: "linear-gradient(to right, hsl(263 45% 70%), hsl(263 65% 54%))",
             }}
           />
           <div
             className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-white transition-all duration-700 ease-out"
             style={{
               left: `calc(${value}% - 6px)`,
-              background: "hsl(263 65% 58%)",
-              boxShadow: "0 1px 4px hsl(263 50% 50% / 0.35)",
+              background: "hsl(263 65% 56%)",
+              boxShadow: "0 1px 4px hsl(263 50% 50% / 0.4)",
             }}
           />
         </div>
-        <span className={`text-xs w-10 transition-colors ${value > 50 ? "text-stone-600 font-medium" : "text-stone-300"}`}>
+        <span className={`text-xs w-10 transition-colors ${isRight ? "text-stone-800 font-semibold" : "text-stone-400"}`}>
           {right}
         </span>
       </div>
@@ -111,7 +111,7 @@ function AxisRow({ name, left, right, value }: { name: string; left: string; rig
 
 const cardStyle = {
   background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)",
-  boxShadow: "0 1px 3px hsl(263 30% 30% / 0.06), 0 0 0 1px hsl(263 20% 92%)",
+  boxShadow: "0 1px 3px hsl(263 30% 30% / 0.07), 0 0 0 1px hsl(263 20% 90%)",
 };
 
 export function SummaryCards({ analysis }: Props) {
@@ -119,80 +119,84 @@ export function SummaryCards({ analysis }: Props) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Tonal Balance */}
       <div className="rounded-2xl p-5" style={cardStyle}>
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <IconBox color="violet">
-              <Activity className="w-4 h-4 text-violet-500" />
+              <Activity className="w-4 h-4 text-violet-600" />
             </IconBox>
             <div>
-              <p className="text-sm font-semibold text-stone-700">Tonal Balance</p>
+              <p className="text-sm font-bold text-stone-900">Tonal Balance</p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <ScoreDot score={spectrum.score} />
-                <span className="text-xs text-stone-400">score {spectrum.score}/100</span>
+                <span className="text-xs text-stone-500">score {spectrum.score}/100</span>
               </div>
             </div>
           </div>
           <LabelPill label={spectrum.label} />
         </div>
-        <p className="text-xs text-stone-500 leading-relaxed">
+        <p className="text-xs text-stone-600 leading-relaxed">
           {describeTonalBalance(spectrum)}
         </p>
       </div>
 
+      {/* Dynamic Feel */}
       <div className="rounded-2xl p-5" style={cardStyle}>
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <IconBox color="violet">
-              <Headphones className="w-4 h-4 text-violet-500" />
+              <Headphones className="w-4 h-4 text-violet-600" />
             </IconBox>
             <div>
-              <p className="text-sm font-semibold text-stone-700">Dynamic Feel</p>
+              <p className="text-sm font-bold text-stone-900">Dynamic Feel</p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <ScoreDot score={dynamics.score} />
-                <span className="text-xs text-stone-400">crest factor {dynamics.crestFactor} dB</span>
+                <span className="text-xs text-stone-500">crest {dynamics.crestFactor} dB</span>
               </div>
             </div>
           </div>
           <LabelPill label={dynamics.label} />
         </div>
-        <p className="text-xs text-stone-500 leading-relaxed">
+        <p className="text-xs text-stone-600 leading-relaxed">
           {describeDynamicFeel(dynamics)}
         </p>
       </div>
 
+      {/* Translation Risk */}
       <div className="rounded-2xl p-5" style={cardStyle}>
         <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <IconBox color="amber">
-              <AlertTriangle className="w-4 h-4 text-amber-500" />
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
             </IconBox>
             <div>
-              <p className="text-sm font-semibold text-stone-700">Translation Risk</p>
+              <p className="text-sm font-bold text-stone-900">Translation Risk</p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <ScoreDot risk={translation.risk} />
-                <span className="text-xs text-stone-400">{translation.risk} risk</span>
+                <span className="text-xs text-stone-500">{translation.risk} risk</span>
               </div>
             </div>
           </div>
           <LabelPill label={translation.label} />
         </div>
-        <ul className="space-y-1.5">
+        <ul className="space-y-2">
           {translation.details.map((d, i) => (
-            <li key={i} className="text-xs text-stone-500 flex gap-2">
-              <span className="text-violet-300 mt-px flex-shrink-0">·</span>
+            <li key={i} className="text-xs text-stone-600 flex gap-2 leading-relaxed">
+              <span className="text-violet-400 mt-px flex-shrink-0 font-bold">·</span>
               <span>{d}</span>
             </li>
           ))}
         </ul>
       </div>
 
+      {/* Emotional Read */}
       <div className="rounded-2xl p-5" style={cardStyle}>
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2.5 mb-4">
           <IconBox color="violet">
-            <Sparkles className="w-4 h-4 text-violet-500" />
+            <Sparkles className="w-4 h-4 text-violet-600" />
           </IconBox>
-          <p className="text-sm font-semibold text-stone-700">Emotional Read</p>
+          <p className="text-sm font-bold text-stone-900">Emotional Read</p>
         </div>
         <div className="space-y-4">
           <AxisRow name="Presence" left="recessed" right="upfront" value={emotional.presence.value} />

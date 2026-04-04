@@ -70,14 +70,14 @@ export function SummaryCards({ analysis }: Props) {
         </div>
         <p className="text-xs text-stone-500 leading-relaxed">
           {spectrum.label === "balanced"
-            ? "Energy is well-distributed across the frequency range. Likely to translate well on most playback systems."
+            ? "Weight, warmth, and clarity feel evenly shared — nothing is pulling too hard in any direction."
             : spectrum.label === "bass-heavy"
-            ? "Significant low-end energy dominates. Check translation on earbuds and laptop speakers."
+            ? "Low-end weight is dominant, giving the mix a heavy, dense feel. Upper clarity may be getting pushed back."
             : spectrum.label === "bright"
-            ? "Upper frequencies are prominent. May cause listener fatigue on extended listening."
+            ? "Top end feels very forward and exposed. The mix has air and clarity, but warmth and body are light."
             : spectrum.label === "mid-forward"
-            ? "Strong mid-range presence. Great for guitar and vocal-led music; check for masking."
-            : "Limited frequency content. Consider whether this suits the genre or needs attention."
+            ? "Midrange carries most of the mix's energy — presence is strong, but the low end and top end sit back."
+            : "Low-end weight is minimal, giving a lighter overall feel. The mix may lack body or fullness in the low-mids."
           }
         </p>
       </div>

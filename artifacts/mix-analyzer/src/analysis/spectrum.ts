@@ -123,18 +123,24 @@ export function analyzeSpectrum(audioBuffer: AudioBuffer): SpectrumData {
 
   if (subRatio > 0.4) {
     label = "bass-heavy";
-    score = Math.round(subRatio * 100);
+    // Score reflects health of the bass emphasis: starts at 80 when just over threshold,
+    // falls toward 45 only when sub becomes extremely dominant (>0.75)
+    score = Math.round(Math.max(45, 80 - (subRatio - 0.4) * 100));
   } else if (highRatio > 0.4) {
     label = "bright";
-    score = Math.round(highRatio * 100);
+    // Same principle: intentional brightness scores well, extreme brightness scores lower
+    score = Math.round(Math.max(45, 80 - (highRatio - 0.4) * 100));
   } else if (midRatio > 0.5) {
     label = "mid-forward";
-    score = Math.round(midRatio * 100);
+    // Mid-forward is one of the most common intentional shapes; scores high at moderate levels
+    score = Math.round(Math.max(50, 82 - (midRatio - 0.5) * 80));
   } else if (subRatio < 0.05 && lowMidRatio < 0.15) {
     label = "thin";
-    score = 30;
+    // Thin is genuinely problematic — low score is correct
+    score = 28;
   } else {
     label = "balanced";
+    // Score = closeness to ideal even distribution across the 4 bands
     score = Math.round((1 - Math.abs(subRatio - 0.25) - Math.abs(highRatio - 0.25)) * 100);
   }
 

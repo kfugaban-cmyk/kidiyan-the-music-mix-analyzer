@@ -1,5 +1,38 @@
-import type { MixAnalysis } from "@/analysis/types";
+import type { MixAnalysis, SpectrumData, DynamicsData } from "@/analysis/types";
 import { AlertTriangle, Activity, Headphones, Sparkles } from "lucide-react";
+
+function describeTonalBalance(s: SpectrumData): string {
+  const { sub, lowMid, mid, high, label } = s;
+  if (label === "bass-heavy") {
+    const clarity = mid + high;
+    return `Sub-bass is dominant at ${sub}% — the low-end weight is thick. Mid and high energy combined (${clarity}%) is sitting back, so clarity and air may be getting masked by the low-end mass.`;
+  }
+  if (label === "bright") {
+    return `High end carries ${high}% of the spectral energy — the mix has air and presence, but body is light: sub at ${sub}%, low-mids at ${lowMid}%. It may feel thin on small speakers.`;
+  }
+  if (label === "mid-forward") {
+    return `Midrange is the dominant force at ${mid}% — vocals and lead instruments are upfront. Sub sits at ${sub}% and highs at ${high}%, so the mix has limited low-end weight and top-end shimmer.`;
+  }
+  if (label === "thin") {
+    return `Low-end energy is very sparse — sub at ${sub}%, low-mids at ${lowMid}%. The mix may lack body and fullness, especially on anything with bass drivers or subwoofers.`;
+  }
+  // balanced
+  return `Spread is fairly even — sub ${sub}%, low-mids ${lowMid}%, mids ${mid}%, highs ${high}%. No single band is dominating, which gives the mix flexibility across playback systems.`;
+}
+
+function describeDynamicFeel(d: DynamicsData): string {
+  const { label, crestFactor, rmsDb } = d;
+  if (label === "compressed") {
+    return `Crest factor is ${crestFactor} dB — heavy limiting has flattened most transient movement. The mix has consistent loudness (${rmsDb} dBFS RMS) but very little dynamic breathing room.`;
+  }
+  if (label === "punchy") {
+    return `Crest factor of ${crestFactor} dB gives the mix body without smashing it flat. Transients are landing with definition, and the RMS of ${rmsDb} dBFS keeps energy present throughout.`;
+  }
+  if (label === "dynamic") {
+    return `${crestFactor} dB of crest factor means transients are largely intact — the mix breathes naturally. At ${rmsDb} dBFS RMS, it has headroom. Loud platforms may need a master limiter pass.`;
+  }
+  return `Crest factor of ${crestFactor} dB is wide — dynamic range is very open. The ${rmsDb} dBFS RMS average is low, which is natural but may need taming for streaming platforms.`;
+}
 
 interface Props {
   analysis: MixAnalysis;
@@ -103,16 +136,7 @@ export function SummaryCards({ analysis }: Props) {
           <LabelPill label={spectrum.label} />
         </div>
         <p className="text-xs text-stone-500 leading-relaxed">
-          {spectrum.label === "balanced"
-            ? "Weight, warmth, and clarity feel evenly shared — nothing is pulling too hard in any direction."
-            : spectrum.label === "bass-heavy"
-            ? "Low-end weight is dominant, giving the mix a heavy, dense feel. Upper clarity may be getting pushed back."
-            : spectrum.label === "bright"
-            ? "Top end feels very forward and exposed. The mix has air and clarity, but warmth and body are light."
-            : spectrum.label === "mid-forward"
-            ? "Midrange carries most of the mix's energy — presence is strong, but the low end and top end sit back."
-            : "Low-end weight is minimal, giving a lighter overall feel. The mix may lack body or fullness in the low-mids."
-          }
+          {describeTonalBalance(spectrum)}
         </p>
       </div>
 
@@ -133,14 +157,7 @@ export function SummaryCards({ analysis }: Props) {
           <LabelPill label={dynamics.label} />
         </div>
         <p className="text-xs text-stone-500 leading-relaxed">
-          {dynamics.label === "compressed"
-            ? "Heavy limiting applied. The mix has very little dynamic variation — common for modern pop/EDM."
-            : dynamics.label === "punchy"
-            ? "Moderate compression with strong transients. A balanced feel that works well across genres."
-            : dynamics.label === "dynamic"
-            ? "Good dynamic range preserved. Transients are clear and the mix breathes naturally."
-            : "Wide dynamic range detected. May need level management depending on the target platform."
-          }
+          {describeDynamicFeel(dynamics)}
         </p>
       </div>
 

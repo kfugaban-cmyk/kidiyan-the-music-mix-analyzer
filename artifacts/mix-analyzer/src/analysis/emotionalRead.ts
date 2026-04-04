@@ -115,57 +115,57 @@ export function analyzeTranslationRisk(
   let phoneNote: string;
   let phoneIssue = false;
   if (spectrum.sub > 58) {
-    phoneNote = "low-end energy will likely disappear on phone speakers — the sub weight won't carry";
+    phoneNote = `Phone speakers: sub is at ${spectrum.sub}% — that energy won't carry on small drivers that roll off sharply below 200Hz. The low-end weight will largely disappear.`;
     phoneIssue = true;
   } else if (spectrum.high > 65) {
-    phoneNote = "top end may feel harsh and brittle through phone speakers without a proper tweeter";
+    phoneNote = `Phone speakers: high end is at ${spectrum.high}% — without a real tweeter, this may come across harsh or shrill through a phone's single driver.`;
     phoneIssue = true;
   } else if (spectrum.mid < 28 && spectrum.sub > 40) {
-    phoneNote = "vocal clarity may suffer on phone speakers — the mid presence is low relative to the bass";
+    phoneNote = `Phone speakers: mid presence is only ${spectrum.mid}% against ${spectrum.sub}% sub — once the bass disappears on phone speakers, the vocals and leads may feel buried.`;
     phoneIssue = true;
   } else if (spectrum.sub < 18 && spectrum.lowMid < 28) {
-    phoneNote = "the mix is already light on low-end, so phone speakers won't lose much body";
+    phoneNote = `Phone speakers: sub is light at ${spectrum.sub}% — not much low-end to lose, so phone speakers won't change the character significantly.`;
   } else {
-    phoneNote = "mid-range clarity should hold up reasonably well on phone speakers";
+    phoneNote = `Phone speakers: midrange energy at ${spectrum.mid}% should give the mix enough clarity to carry on phone speakers.`;
   }
 
   // --- Headphones (detailed, intimate, full stereo field) ---
   let headphoneNote: string;
   let headphoneIssue = false;
   if (stereo.widthScore > 72) {
-    headphoneNote = "the wide stereo field may feel exaggerated or disorienting on headphones";
+    headphoneNote = `Headphones: stereo width scores ${stereo.widthScore}/100 — at close range in headphones, a field this wide can feel unnaturally spread or fatiguing over longer listens.`;
     headphoneIssue = true;
   } else if (stereo.widthScore < 12) {
-    headphoneNote = "the narrow stereo field may feel flat and unengaging on headphones";
+    headphoneNote = `Headphones: stereo width is only ${stereo.widthScore}/100 — in headphones where stereo is most noticeable, this narrowness may feel flat and unengaging.`;
     headphoneIssue = true;
   } else if (spectrum.high > 65) {
-    headphoneNote = "high frequencies may feel sharper and more exposed on headphones";
+    headphoneNote = `Headphones: high end at ${spectrum.high}% will be fully exposed through a good pair of headphones — any harshness or over-brightness in the 8–12kHz range will be audible.`;
     headphoneIssue = true;
   } else if (dynamics.crestFactor > 18) {
-    headphoneNote = "dynamic swings may feel dramatic in quiet listening on headphones";
+    headphoneNote = `Headphones: ${dynamics.crestFactor} dB of crest factor means wide dynamic swings — in quiet listening on headphones, softer passages may feel too low and louder moments may startle.`;
     headphoneIssue = true;
   } else {
-    headphoneNote = "stereo balance and dynamics should translate comfortably on headphones";
+    headphoneNote = `Headphones: width at ${stereo.widthScore}/100 and ${dynamics.crestFactor} dB crest factor are both in a comfortable range — should translate well at close range.`;
   }
 
   // --- Car speakers (bass resonance, road noise, extended listening) ---
   let carNote: string;
   let carIssue = false;
   if (spectrum.sub > 65) {
-    carNote = "bass may build up and sound boomy through car speakers — the sub is already heavy";
+    carNote = `Car speakers: sub is at ${spectrum.sub}% — enclosed car interiors resonate heavily in the low frequencies, and a sub this dominant risks building up into muddiness or boom.`;
     carIssue = true;
   } else if (dynamics.crestFactor > 16) {
-    carNote = "vocals may sit behind road noise — the dynamic range is wide enough to get lost in a car";
+    carNote = `Car speakers: ${dynamics.crestFactor} dB of dynamic range is wide enough that quieter elements may get lost under road noise — sustained sections and subtler details may disappear.`;
     carIssue = true;
   } else if (spectrum.sub < 18 && spectrum.lowMid < 28) {
-    carNote = "the mix may feel very thin in a car — car resonance may overemphasize what little low-end there is";
+    carNote = `Car speakers: sub at ${spectrum.sub}% and low-mids at ${spectrum.lowMid}% leave the mix thin — car systems often emphasize bass, so the thinness may become more noticeable.`;
     carIssue = true;
   } else if (dynamics.crestFactor < 7) {
-    carNote = "the compressed dynamics should cut through road noise without getting lost";
+    carNote = `Car speakers: ${dynamics.crestFactor} dB crest factor means the mix is dense and consistent — it will cut through road noise cleanly without getting lost.`;
   } else if (spectrum.mid > 55) {
-    carNote = "strong midrange presence should help the mix cut through road noise";
+    carNote = `Car speakers: midrange at ${spectrum.mid}% should help the most important elements cut through road noise and typical car speaker colorization.`;
   } else {
-    carNote = "should translate reasonably on a standard car system";
+    carNote = `Car speakers: levels and spectral balance look reasonable — sub at ${spectrum.sub}%, mids at ${spectrum.mid}%, crest at ${dynamics.crestFactor} dB should hold up in a typical car system.`;
   }
 
   const details = [phoneNote, headphoneNote, carNote];

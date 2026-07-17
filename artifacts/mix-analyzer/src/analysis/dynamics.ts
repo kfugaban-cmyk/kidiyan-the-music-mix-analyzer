@@ -17,6 +17,7 @@ export function analyzeDynamics(audioBuffer: AudioBuffer): DynamicsData {
 
   const peakDb = peakAbs > 0 ? 20 * Math.log10(peakAbs) : -96;
   const rmsDb = rms > 0 ? 20 * Math.log10(rms) : -96;
+  const approxLufs = rmsDb - 0.7;
 
   const crestFactor = peakAbs > 0 && rms > 0 ? peakAbs / rms : 1;
   const crestDb = 20 * Math.log10(crestFactor);
@@ -42,6 +43,7 @@ export function analyzeDynamics(audioBuffer: AudioBuffer): DynamicsData {
     crestFactor: Math.round(crestDb * 10) / 10,
     rmsDb: Math.round(rmsDb * 10) / 10,
     peakDb: Math.round(peakDb * 10) / 10,
+    approxLufs: Math.round(approxLufs * 10) / 10,
     label,
     score,
   };

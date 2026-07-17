@@ -1,293 +1,304 @@
-import type { MixAnalysis, SpectrumData, DynamicsData, EmotionalReadData } from "@/analysis/types";
-import { AlertTriangle, Activity, Headphones, Sparkles } from "lucide-react";
-
-interface EmotionalParagraph {
-  character: string;
-  listenerEffect: string;
-  masteringNote: string;
-}
-
-function buildEmotionalParagraph(e: EmotionalReadData): EmotionalParagraph {
-  const p = e.presence.value;   // recessed (0) → upfront (100)
-  const a = e.attack.value;     // rounded (0) → cutting (100)
-  const s = e.space.value;      // dry (0) → open (100)
-  const w = e.weight.value;     // airy (0) → heavy (100)
-
-  // --- Sentence 1: character (presence × space + attack × weight) ---
-  let opening: string;
-  if (p < 35 && s < 35)       opening = "close and dry";
-  else if (p < 35 && s > 65)  opening = "distant but open";
-  else if (p < 35)             opening = "slightly withdrawn";
-  else if (p > 65 && s > 65)  opening = "open and upfront";
-  else if (p > 65 && s < 35)  opening = "close and direct";
-  else if (p > 65)             opening = "forward and present";
-  else if (s > 65)             opening = "settled and spacious";
-  else if (s < 35)             opening = "intimate and focused";
-  else                         opening = "centered and even";
-
-  let texture: string;
-  if (a < 35 && w < 35)       texture = "a light, feathery touch with very little body";
-  else if (a < 35 && w > 65)  texture = "smooth transients and a heavy, grounded bottom";
-  else if (a < 35 && w > 45)  texture = "rounded edges and a solid, full body";
-  else if (a < 35)             texture = "a soft, unhurried edge and an airy frame";
-  else if (a > 65 && w > 65)  texture = "crisp attack and dense, weighty low end";
-  else if (a > 65 && w < 35)  texture = "a cutting edge but a lean, thin body";
-  else if (a > 65 && w > 45)  texture = "sharp transients and a grounded, full presence";
-  else if (a > 65)             texture = "a defined, punchy edge with controlled weight";
-  else if (w > 65)             texture = "measured movement and a heavy, grounded body";
-  else if (w < 35)             texture = "gentle definition and a lean, airy frame";
-  else                         texture = "balanced weight and a measured, even edge";
-
-  const character = `${opening}, with ${texture}`;
-
-  // --- Sentence 2: listener effect (presence × weight as primary drivers) ---
-  let listenerEffect: string;
-  if (p > 65 && w > 65) {
-    listenerEffect = "This combination pulls the listener in both emotionally and physically — the upfront presence demands attention while the low-end weight gives the body something to feel.";
-  } else if (p > 65 && w < 35) {
-    listenerEffect = "The forward presence keeps the listener engaged and alert, but the thin body means the energy comes from edge rather than mass — it can feel exciting but tiring over a full listen.";
-  } else if (p > 65 && s > 65) {
-    listenerEffect = "Being both present and spacious, the mix creates a sense of being in a room with the sound rather than behind it — immersive and immediate at once.";
-  } else if (p > 65) {
-    listenerEffect = "The upfront character keeps the listener close — there's no distance between the lead and the ear, which creates intimacy and directness.";
-  } else if (p < 35 && s > 65) {
-    listenerEffect = "The recessed presence and open space give the mix a cinematic quality — the listener observes rather than participates, which suits atmospheric or background material well.";
-  } else if (p < 35 && w > 65) {
-    listenerEffect = "The bottom end does most of the emotional work here — physical and weighty, but the lead stays back, which can create a dark, submerged feeling.";
-  } else if (p < 35) {
-    listenerEffect = "The mix sits back from the listener rather than reaching out, which can feel understated and cool, or slightly lifeless depending on the genre and intent.";
-  } else if (w > 65 && a > 65) {
-    listenerEffect = "Heavy low end combined with sharp transients creates a physically demanding listen — punchy and driving, the kind of mix that demands a sound system to fully land.";
-  } else if (w > 65) {
-    listenerEffect = "The weight of the low end grounds the emotional experience — there's a steadiness and density to the sound that feels committed and full.";
-  } else if (s > 65 && a < 35) {
-    listenerEffect = "Wide, soft, and open — the mix creates space rather than filling it, which suits gentle or introspective material but may lack the urgency needed in louder contexts.";
-  } else if (a > 65) {
-    listenerEffect = "Sharp transients keep the listener's nervous system active — the mix feels crisp and alert, where individual hits and details register clearly even at low volumes.";
-  } else {
-    listenerEffect = "The overall balance sits comfortably in the center — nothing pulls hard in any one direction, which gives the mix versatility across different listening contexts.";
-  }
-
-  // --- Sentence 3: mastering impact (keyed to the most extreme axis) ---
-  const deviations = [
-    { axis: "presence", val: p, lo: "low", hi: "high" },
-    { axis: "attack",   val: a, lo: "low", hi: "high" },
-    { axis: "space",    val: s, lo: "low", hi: "high" },
-    { axis: "weight",   val: w, lo: "low", hi: "high" },
-  ];
-  const mostExtreme = deviations.reduce((best, cur) =>
-    Math.abs(cur.val - 50) > Math.abs(best.val - 50) ? cur : best
-  );
-  const direction = mostExtreme.val > 50 ? "high" : "low";
-
-  let masteringNote: string;
-  if (mostExtreme.axis === "presence" && direction === "high") {
-    masteringNote = "With the mix this forward, limiting is the most consequential mastering step — over-compressing will push the lead into harshness, so gain staging before the limiter matters more than usual.";
-  } else if (mostExtreme.axis === "presence" && direction === "low") {
-    masteringNote = "A gentle high-shelf lift in mastering (around 8–12kHz) could bring the lead forward without disrupting the spectral balance — or a touch of saturation to add presence without adding brightness.";
-  } else if (mostExtreme.axis === "attack" && direction === "high") {
-    masteringNote = "The sharp transients mean the limiter will engage on peaks frequently — a short transient shaper before limiting can soften the worst hits and allow a louder master without audible pumping.";
-  } else if (mostExtreme.axis === "attack" && direction === "low") {
-    masteringNote = "The soft transients leave room for transient enhancement in mastering — a gentle attack shaper can add front-end definition to the lead without over-brightening the high shelf.";
-  } else if (mostExtreme.axis === "space" && direction === "high") {
-    masteringNote = "The wide stereo field will narrow slightly in streaming loudness normalization and mono fold-down — the master should be checked in mono to ensure no critical elements cancel or collapse.";
-  } else if (mostExtreme.axis === "space" && direction === "low") {
-    masteringNote = "Mid-side processing in mastering could gently widen the stereo image — even a few percent of side-channel lift can open the mix considerably without introducing phase issues.";
-  } else if (mostExtreme.axis === "weight" && direction === "high") {
-    masteringNote = "The heavy low end will cause the limiter to work hardest on bass hits — a multiband approach, or high-passing the side channel before brick-walling, can prevent the sub from controlling the loudness ceiling.";
-  } else if (mostExtreme.axis === "weight" && direction === "low") {
-    masteringNote = "A low-shelf or sub-bass harmonic saturation in mastering can add warmth and body — this is especially useful if the mix will be heard on systems that can't reproduce deep sub frequencies.";
-  } else {
-    masteringNote = "With all axes close to center, the mix is in a balanced position going into mastering — modest limiting and EQ should be sufficient without any major corrective moves.";
-  }
-
-  return { character, listenerEffect, masteringNote };
-}
-
-function describeTonalBalance(s: SpectrumData): string {
-  const { sub, lowMid, mid, high, label } = s;
-  if (label === "bass-heavy") {
-    const clarity = mid + high;
-    return `Sub-bass is dominant at ${sub}% — the low-end weight is thick. Mid and high energy combined (${clarity}%) is sitting back, so clarity and air may be getting masked by the low-end mass.`;
-  }
-  if (label === "bright") {
-    return `High end carries ${high}% of the spectral energy — the mix has air and presence, but body is light: sub at ${sub}%, low-mids at ${lowMid}%. It may feel thin on small speakers.`;
-  }
-  if (label === "mid-forward") {
-    return `Midrange is the dominant force at ${mid}% — vocals and lead instruments are upfront. Sub sits at ${sub}% and highs at ${high}%, so the mix has limited low-end weight and top-end shimmer.`;
-  }
-  if (label === "thin") {
-    return `Low-end energy is very sparse — sub at ${sub}%, low-mids at ${lowMid}%. The mix may lack body and fullness, especially on anything with bass drivers or subwoofers.`;
-  }
-  return `Spread is fairly even — sub ${sub}%, low-mids ${lowMid}%, mids ${mid}%, highs ${high}%. No single band is dominating, which gives the mix flexibility across playback systems.`;
-}
-
-function describeDynamicFeel(d: DynamicsData): string {
-  const { label, crestFactor, rmsDb } = d;
-  if (label === "compressed") {
-    return `Crest factor is ${crestFactor} dB — heavy limiting has flattened most transient movement. The mix has consistent loudness (${rmsDb} dBFS RMS) but very little dynamic breathing room.`;
-  }
-  if (label === "punchy") {
-    return `Crest factor of ${crestFactor} dB gives the mix body without smashing it flat. Transients are landing with definition, and the RMS of ${rmsDb} dBFS keeps energy present throughout.`;
-  }
-  if (label === "dynamic") {
-    return `${crestFactor} dB of crest factor means transients are largely intact — the mix breathes naturally. At ${rmsDb} dBFS RMS, it has headroom. Loud platforms may need a master limiter pass.`;
-  }
-  return `Crest factor of ${crestFactor} dB is wide — dynamic range is very open. The ${rmsDb} dBFS RMS average is low, which is natural but may need taming for streaming platforms.`;
-}
+import type { ReactNode } from "react";
+import type { MixAnalysis, EmotionalDimensionAnalysis } from "@/analysis/types";
+import { Activity, AlertTriangle, Compass, Gauge, Layers3, Sparkles } from "lucide-react";
+import { EmotionalHierarchy } from "@/components/EmotionalHierarchy";
 
 interface Props {
   analysis: MixAnalysis;
 }
 
-function ScoreDot({ score, risk }: { score?: number; risk?: "low" | "medium" | "high" }) {
-  if (risk !== undefined) {
-    const color = risk === "low" ? "bg-emerald-500" : risk === "medium" ? "bg-amber-500" : "bg-rose-500";
-    return <div className={`w-2 h-2 rounded-full ${color}`} />;
-  }
-  if (score !== undefined) {
-    const color = score > 60 ? "bg-emerald-500" : score > 30 ? "bg-amber-500" : "bg-rose-500";
-    return <div className={`w-2 h-2 rounded-full ${color}`} />;
-  }
-  return null;
+const surfaceStyle = {
+  background: "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(247,245,239,0.98) 100%)",
+  boxShadow: "0 12px 40px rgba(35, 32, 24, 0.08), 0 0 0 1px rgba(72, 63, 48, 0.08)",
+};
+
+function classForLevel(level: "low" | "moderate" | "high") {
+  if (level === "high") return "text-stone-900 bg-stone-900/8 border-stone-900/15";
+  if (level === "moderate") return "text-amber-900 bg-amber-500/10 border-amber-600/20";
+  return "text-teal-900 bg-teal-500/10 border-teal-700/20";
 }
 
-function LabelPill({ label }: { label: string }) {
-  return (
-    <span
-      className="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full text-violet-700"
-      style={{ background: "hsl(263 60% 95%)", boxShadow: "0 0 0 1px hsl(263 40% 85%)" }}
-    >
-      {label}
-    </span>
-  );
+function confidenceClass(level: "low" | "medium" | "high") {
+  if (level === "high") return "text-emerald-900 bg-emerald-500/10 border-emerald-700/20";
+  if (level === "medium") return "text-amber-900 bg-amber-500/10 border-amber-700/20";
+  return "text-rose-900 bg-rose-500/10 border-rose-700/20";
 }
 
-function IconBox({ children, color }: { children: React.ReactNode; color: "violet" | "amber" }) {
+function Pill({ children, className }: { children: ReactNode; className: string }) {
+  return <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold ${className}`}>{children}</span>;
+}
+
+function SectionCard({
+  icon,
+  title,
+  eyebrow,
+  children,
+}: {
+  icon: ReactNode;
+  title: string;
+  eyebrow: string;
+  children: ReactNode;
+}) {
   return (
-    <div
-      className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-      style={
-        color === "violet"
-          ? { background: "linear-gradient(135deg, hsl(263 55% 94%) 0%, hsl(280 50% 92%) 100%)", boxShadow: "0 0 0 1px hsl(263 40% 86%)" }
-          : { background: "linear-gradient(135deg, hsl(40 100% 94%) 0%, hsl(35 90% 91%) 100%)", boxShadow: "0 0 0 1px hsl(40 60% 84%)" }
-      }
-    >
+    <div className="rounded-[24px] p-5 print-page-card print:break-inside-avoid" style={surfaceStyle}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-stone-900 text-stone-50 shadow-sm">
+          {icon}
+        </div>
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-stone-500">{eyebrow}</p>
+          <p className="text-base font-semibold text-stone-900">{title}</p>
+        </div>
+      </div>
       {children}
     </div>
   );
 }
 
+function describeTonalBalance(analysis: MixAnalysis): string {
+  const { spectrum, features } = analysis;
+  return `Sub ${spectrum.sub}%, low-mids ${spectrum.lowMid}%, mids ${spectrum.mid}%, highs ${spectrum.high}%. The deeper emotional read is being shaped by low-mid density at ${features.tonal.lowMidDensity}/100, air at ${features.tonal.airBandEnergy}/100, and 2k-5k pressure at ${features.tonal.harshness2k5k}/100.`;
+}
 
-const cardStyle = {
-  background: "linear-gradient(160deg, #ffffff 0%, hsl(263 20% 99%) 100%)",
-  boxShadow: "0 1px 3px hsl(263 30% 30% / 0.07), 0 0 0 1px hsl(263 20% 90%)",
-};
+function describeDynamicFeel(analysis: MixAnalysis): string {
+  const { dynamics, features } = analysis;
+  return `Crest factor is ${dynamics.crestFactor} dB with approximate loudness around ${dynamics.approxLufs} LUFS. Microdynamic motion scores ${features.dynamics.microDynamics}/100, section contrast ${features.dynamics.sectionContrast}/100, and compression density ${features.dynamics.compressionDensity}/100, which says more about felt pressure than loudness alone.`;
+}
 
-export function SummaryCards({ analysis }: Props) {
-  const { spectrum, dynamics, translation, emotional } = analysis;
+function describeEvidenceSnapshot(analysis: MixAnalysis): Array<{ label: string; value: number; note: string }> {
+  const { features } = analysis;
+  return [
+    {
+      label: "Dry / wet",
+      value: features.space.dryWet,
+      note: features.space.dryWet > 60 ? "More ambient distance is influencing the emotional read." : "The mix stays relatively dry and immediate.",
+    },
+    {
+      label: "Center hold",
+      value: features.stereo.centerDominance,
+      note: features.stereo.centerDominance > 60 ? "Emotion is anchored around the center image." : "The frame leans less center-held and more spread.",
+    },
+    {
+      label: "Masking risk",
+      value: features.density.maskingRisk,
+      note: features.density.maskingRisk > 60 ? "Density is likely competing for the same space." : "Layer separation is helping the emotional cues stay legible.",
+    },
+    {
+      label: "Vocal closeness",
+      value: features.focal.vocalForwardness,
+      note:
+        features.focal.vocalForwardnessConfidence === "low"
+          ? "Lead closeness is uncertain because no obvious center focal source stands out."
+          : "The focal source appears meaningfully present in the emotional foreground.",
+    },
+  ];
+}
+
+function EmotionCard({ dimension }: { dimension: EmotionalDimensionAnalysis }) {
+  const increase = dimension.recommendations.find((item) => item.direction === "increase");
+  const reduce = dimension.recommendations.find((item) => item.direction === "reduce");
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {/* Tonal Balance */}
-      <div className="rounded-2xl p-5" style={cardStyle}>
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <IconBox color="violet">
-              <Activity className="w-4 h-4 text-violet-600" />
-            </IconBox>
-            <div>
-              <p className="text-sm font-bold text-stone-900">Tonal Balance</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <ScoreDot score={spectrum.score} />
-                <span className="text-xs text-stone-500">score {spectrum.score}/100</span>
-              </div>
-            </div>
+    <div className="rounded-[24px] border border-stone-200/80 bg-white/85 p-5 shadow-[0_10px_30px_rgba(35,32,24,0.06)] print-page-card print:break-inside-avoid">
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <div>
+          <p className="text-base font-semibold leading-tight text-stone-900">{dimension.name}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Pill className={classForLevel(dimension.tendency)}>{dimension.tendency} tendency</Pill>
+            <Pill className={confidenceClass(dimension.confidence)}>{dimension.confidence} confidence</Pill>
           </div>
-          <LabelPill label={spectrum.label} />
         </div>
-        <p className="text-xs text-stone-600 leading-relaxed">
-          {describeTonalBalance(spectrum)}
-        </p>
+        <div className="min-w-[72px] rounded-2xl bg-stone-900 px-3 py-2 text-right text-stone-50">
+          <p className="text-xl font-semibold tabular-nums">{dimension.score}</p>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-stone-300">Score</p>
+        </div>
       </div>
 
-      {/* Dynamic Feel */}
-      <div className="rounded-2xl p-5" style={cardStyle}>
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <IconBox color="violet">
-              <Headphones className="w-4 h-4 text-violet-600" />
-            </IconBox>
-            <div>
-              <p className="text-sm font-bold text-stone-900">Dynamic Feel</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <ScoreDot score={dynamics.score} />
-                <span className="text-xs text-stone-500">crest {dynamics.crestFactor} dB</span>
+      <p className="text-sm leading-6 text-stone-800">{dimension.summary}</p>
+
+      <div className="mt-4 space-y-4">
+        <div>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">Why it may feel this way</p>
+          <p className="text-sm leading-6 text-stone-700">{dimension.interpretation}</p>
+        </div>
+
+        <div>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">Likely mix causes</p>
+          <p className="text-sm leading-6 text-stone-700">{dimension.mixCause}</p>
+        </div>
+
+        <div>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">Evidence</p>
+          <div className="space-y-2">
+            {dimension.evidence.map((item) => (
+              <div key={item.feature} className="rounded-2xl bg-stone-50 px-3 py-3">
+                <div className="mb-1 flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-stone-900">{item.feature}</p>
+                  <span className={`text-[10px] font-bold uppercase tracking-[0.18em] ${item.strength === "strong" ? "text-stone-900" : "text-stone-500"}`}>
+                    {item.strength}
+                  </span>
+                </div>
+                <p className="text-sm leading-6 text-stone-700">{item.observation}</p>
+                <p className="mt-1 text-sm leading-6 text-stone-600">{item.influence}</p>
               </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl bg-emerald-50 px-4 py-4 ring-1 ring-emerald-100">
+            <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-800">To increase this feeling</p>
+            <ul className="space-y-2">
+              {increase?.items.map((item) => (
+                <li key={item} className="text-sm leading-6 text-emerald-950">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl bg-amber-50 px-4 py-4 ring-1 ring-amber-100">
+            <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-amber-800">To reduce this feeling</p>
+            <ul className="space-y-2">
+              {reduce?.items.map((item) => (
+                <li key={item} className="text-sm leading-6 text-amber-950">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">Potential tradeoffs</p>
+          <ul className="space-y-2">
+            {dimension.tradeoffs.map((tradeoff) => (
+              <li key={tradeoff} className="text-sm leading-6 text-stone-700">
+                {tradeoff}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SummaryCards({ analysis }: Props) {
+  const snapshot = describeEvidenceSnapshot(analysis);
+  const { emotionalProfile, translation } = analysis;
+
+  return (
+    <div className="space-y-5 print:space-y-4">
+      <SectionCard icon={<Sparkles className="h-5 w-5" />} title="Emotional Profile" eyebrow="Perceived tendencies">
+        <div className="space-y-4">
+          <p className="max-w-3xl text-sm leading-6 text-stone-800">{emotionalProfile.overview}</p>
+          <p className="text-xs leading-5 text-stone-600">{emotionalProfile.disclaimer}</p>
+
+          <EmotionalHierarchy dimensions={emotionalProfile.dimensions} />
+
+          <div className="flex flex-wrap gap-2">
+            {emotionalProfile.standoutDimensions.map((key) => {
+              const item = emotionalProfile.dimensions.find((dimension) => dimension.key === key);
+              if (!item) return null;
+              return <Pill key={key} className={classForLevel(item.tendency)}>{item.name}</Pill>;
+            })}
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="rounded-[22px] bg-stone-900 px-5 py-5 text-stone-50">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-stone-300">Model note</p>
+              <p className="text-sm leading-6 text-stone-100">
+                This engine is rule-based and interpretable: it scores emotional dimensions from measured mix proxies like density, width by band, transient shape, dynamic relief, dry/wet impression, and spectral balance. It is intentionally not treating emotion as objective truth.
+              </p>
+            </div>
+
+            <div className="rounded-[22px] bg-stone-50 px-5 py-5 ring-1 ring-stone-200">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">Potential tradeoffs</p>
+              <ul className="space-y-2">
+                {emotionalProfile.tradeoffHighlights.map((tradeoff) => (
+                  <li key={tradeoff} className="text-sm leading-6 text-stone-700">
+                    {tradeoff}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-          <LabelPill label={dynamics.label} />
+
+          {emotionalProfile.uncertainty.length > 0 && (
+            <div className="rounded-[22px] bg-amber-50 px-5 py-5 ring-1 ring-amber-100">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-amber-800">Uncertainty</p>
+              <ul className="space-y-2">
+                {emotionalProfile.uncertainty.map((note) => (
+                  <li key={note} className="text-sm leading-6 text-amber-950">
+                    {note}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-        <p className="text-xs text-stone-600 leading-relaxed">
-          {describeDynamicFeel(dynamics)}
-        </p>
+      </SectionCard>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <SectionCard icon={<Activity className="h-5 w-5" />} title="Tonal + Dynamic Context" eyebrow="What is driving the read">
+          <div className="space-y-4">
+            <div>
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">Spectrum</p>
+              <p className="text-sm leading-6 text-stone-700">{describeTonalBalance(analysis)}</p>
+            </div>
+            <div>
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">Dynamics</p>
+              <p className="text-sm leading-6 text-stone-700">{describeDynamicFeel(analysis)}</p>
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard icon={<Compass className="h-5 w-5" />} title="Evidence Snapshot" eyebrow="Interpretable proxies">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {snapshot.map((item) => (
+              <div key={item.label} className="rounded-2xl bg-stone-50 p-4 ring-1 ring-stone-200">
+                <div className="mb-2 flex items-end justify-between gap-3">
+                  <p className="text-sm font-semibold text-stone-900">{item.label}</p>
+                  <p className="text-lg font-semibold tabular-nums text-stone-900">{item.value}</p>
+                </div>
+                <p className="text-sm leading-6 text-stone-700">{item.note}</p>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
+
+        <SectionCard icon={<AlertTriangle className="h-5 w-5" />} title="Translation Risk" eyebrow="Playback realism">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <Pill className={translation.risk === "high" ? "text-rose-900 bg-rose-500/10 border-rose-700/20" : translation.risk === "medium" ? "text-amber-900 bg-amber-500/10 border-amber-700/20" : "text-emerald-900 bg-emerald-500/10 border-emerald-700/20"}>
+              {translation.risk} risk
+            </Pill>
+            <Pill className="text-stone-800 bg-stone-100 border-stone-200">{translation.label}</Pill>
+          </div>
+          <ul className="space-y-2">
+            {translation.details.map((detail) => (
+              <li key={detail} className="text-sm leading-6 text-stone-700">
+                {detail}
+              </li>
+            ))}
+          </ul>
+        </SectionCard>
+
+        <SectionCard icon={<Gauge className="h-5 w-5" />} title="Feature Model" eyebrow="Tuneable system">
+          <div className="space-y-3 text-sm leading-6 text-stone-700">
+            <p>The emotional engine separates feature extraction, emotion scoring, explanation, and suggestion generation so you can retune the mapping without rewriting the UI.</p>
+            <p>Heuristics use weighted combinations, not one-to-one tags, which lets contradictory feelings coexist: a mix can be intimate and open, heavy and restrained, or warm and overwhelming at the same time.</p>
+            <p>The strongest tuning points live in the feature scores and rule weights, not in presentation copy.</p>
+          </div>
+        </SectionCard>
       </div>
 
-      {/* Translation Risk */}
-      <div className="rounded-2xl p-5" style={cardStyle}>
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <IconBox color="amber">
-              <AlertTriangle className="w-4 h-4 text-amber-600" />
-            </IconBox>
-            <div>
-              <p className="text-sm font-bold text-stone-900">Translation Risk</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <ScoreDot risk={translation.risk} />
-                <span className="text-xs text-stone-500">{translation.risk} risk</span>
-              </div>
-            </div>
-          </div>
-          <LabelPill label={translation.label} />
-        </div>
-        <ul className="space-y-2">
-          {translation.details.map((d, i) => (
-            <li key={i} className="text-xs text-stone-600 flex gap-2 leading-relaxed">
-              <span className="text-violet-400 mt-px flex-shrink-0 font-bold">·</span>
-              <span>{d}</span>
-            </li>
+      <SectionCard icon={<Layers3 className="h-5 w-5" />} title="Per-Emotion Score Cards" eyebrow="Deep read">
+        <div className="grid gap-4 xl:grid-cols-2">
+          {emotionalProfile.dimensions.map((dimension) => (
+            <EmotionCard key={dimension.key} dimension={dimension} />
           ))}
-        </ul>
-      </div>
-
-      {/* Emotional Read */}
-      <div className="rounded-2xl p-5" style={cardStyle}>
-        <div className="flex items-center gap-2.5 mb-4">
-          <IconBox color="violet">
-            <Sparkles className="w-4 h-4 text-violet-600" />
-          </IconBox>
-          <p className="text-sm font-bold text-stone-900">Emotional Read</p>
         </div>
-        {(() => {
-          const { character, listenerEffect, masteringNote } = buildEmotionalParagraph(emotional);
-          return (
-            <div className="space-y-3">
-              <p className="text-sm italic font-medium text-stone-800 leading-relaxed">
-                {character}
-              </p>
-              <p className="text-xs text-stone-600 leading-relaxed">
-                {listenerEffect}
-              </p>
-              <div className="border-t border-stone-100 pt-3">
-                <p className="text-[10px] uppercase tracking-wider font-bold text-stone-500 mb-1.5">Mastering note</p>
-                <p className="text-xs text-stone-600 leading-relaxed">
-                  {masteringNote}
-                </p>
-              </div>
-            </div>
-          );
-        })()}
-      </div>
+      </SectionCard>
     </div>
   );
 }

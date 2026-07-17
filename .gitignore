@@ -11,6 +11,12 @@ out-tsc
 # dependencies
 node_modules
 
+# local environment and deployment state
+.env
+.env.*
+!.env.example
+.vercel/
+
 # IDEs and editors
 /.idea
 .project
@@ -47,3 +53,15 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# user-provided or locally rendered audio (the deterministic demo is source-generated)
+uploads/
+recordings/
+exports/
+*.wav
+*.wave
+*.mp3
+*.aif
+*.aiff
+*.flac
+*.m4a

@@ -24,19 +24,119 @@ export interface DynamicsData {
   crestFactor: number;
   rmsDb: number;
   peakDb: number;
+  approxLufs: number;
   label: "compressed" | "punchy" | "dynamic" | "very-dynamic";
   score: number;
 }
 
-export interface EmotionalReadData {
-  /** How forward the lead content sits — vocal presence vs. background */
-  presence: { value: number; label: "recessed" | "upfront" };
-  /** Transient character — soft/rounded attacks vs. sharp/cutting hits */
-  attack: { value: number; label: "rounded" | "cutting" };
-  /** Sense of room — tight and dry vs. open and reverberant */
-  space: { value: number; label: "dry" | "open" };
-  /** Spectral gravity — airy high-shelf feel vs. low-end weight */
-  weight: { value: number; label: "airy" | "heavy" };
+export interface AudioFeatureData {
+  loudness: {
+    rmsDb: number;
+    peakDb: number;
+    crestDb: number;
+    approxLufs: number;
+  };
+  dynamics: {
+    macroRange: number;
+    microDynamics: number;
+    compressionDensity: number;
+    sectionContrast: number;
+  };
+  transients: {
+    sharpness: number;
+    softness: number;
+  };
+  tonal: {
+    spectralCentroidHz: number;
+    subPresence: number;
+    bassDominance: number;
+    lowMidDensity: number;
+    midPresence: number;
+    upperMidPresence: number;
+    harshness2k5k: number;
+    harshness6k10k: number;
+    airBandEnergy: number;
+    warmth: number;
+    harmonicDensity: number;
+  };
+  stereo: {
+    totalWidth: number;
+    lowBandWidth: number;
+    midBandWidth: number;
+    highBandWidth: number;
+    centerDominance: number;
+    sideDominance: number;
+    monoCompatibility: number;
+  };
+  space: {
+    dryWet: number;
+    reverbImpression: number;
+    decayImpression: number;
+    spatialDepth: number;
+  };
+  density: {
+    maskingRisk: number;
+    clutter: number;
+    overallDensity: number;
+  };
+  focal: {
+    vocalForwardness: number;
+    vocalForwardnessConfidence: "low" | "medium" | "high";
+    intimacyProxy: number;
+  };
+  uncertaintyNotes: string[];
+}
+
+export type EmotionalDimensionKey =
+  | "heaviness"
+  | "intimacy"
+  | "fragileVulnerability"
+  | "intentionalVulnerability"
+  | "warmth"
+  | "tension"
+  | "urgency"
+  | "openness"
+  | "isolation"
+  | "aggression"
+  | "stability"
+  | "movement"
+  | "melancholy"
+  | "overwhelm"
+  | "restraint";
+
+export interface EmotionalEvidence {
+  feature: string;
+  observation: string;
+  influence: string;
+  strength: "supporting" | "strong";
+}
+
+export interface EmotionalRecommendation {
+  direction: "increase" | "reduce";
+  items: string[];
+}
+
+export interface EmotionalDimensionAnalysis {
+  key: EmotionalDimensionKey;
+  name: string;
+  score: number;
+  tendency: "low" | "moderate" | "high";
+  confidence: "low" | "medium" | "high";
+  summary: string;
+  interpretation: string;
+  mixCause: string;
+  evidence: EmotionalEvidence[];
+  recommendations: EmotionalRecommendation[];
+  tradeoffs: string[];
+}
+
+export interface EmotionalProfileData {
+  overview: string;
+  disclaimer: string;
+  standoutDimensions: EmotionalDimensionKey[];
+  dimensions: EmotionalDimensionAnalysis[];
+  tradeoffHighlights: string[];
+  uncertainty: string[];
 }
 
 export interface TranslationRiskData {
@@ -50,6 +150,7 @@ export interface MixAnalysis {
   spectrum: SpectrumData;
   stereo: StereoWidthData;
   dynamics: DynamicsData;
-  emotional: EmotionalReadData;
+  features: AudioFeatureData;
+  emotionalProfile: EmotionalProfileData;
   translation: TranslationRiskData;
 }

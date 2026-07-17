@@ -2,7 +2,9 @@ import { analyzeWaveform } from "./waveform";
 import { analyzeSpectrum } from "./spectrum";
 import { analyzeStereoWidth } from "./stereoWidth";
 import { analyzeDynamics } from "./dynamics";
-import { analyzeEmotionalRead, analyzeTranslationRisk } from "./emotionalRead";
+import { analyzeAudioFeatures } from "./audioFeatures";
+import { analyzeEmotionalProfile } from "./emotionalProfile";
+import { analyzeTranslationRisk } from "./translation";
 import type { MixAnalysis } from "./types";
 
 export async function analyzeMix(file: File): Promise<{ audioBuffer: AudioBuffer; analysis: MixAnalysis }> {
@@ -15,13 +17,27 @@ export async function analyzeMix(file: File): Promise<{ audioBuffer: AudioBuffer
   const spectrum = analyzeSpectrum(audioBuffer);
   const stereo = analyzeStereoWidth(audioBuffer);
   const dynamics = analyzeDynamics(audioBuffer);
-  const emotional = analyzeEmotionalRead(spectrum, stereo, dynamics);
+  const features = analyzeAudioFeatures(audioBuffer);
+  const emotionalProfile = analyzeEmotionalProfile(features);
   const translation = analyzeTranslationRisk(spectrum, stereo, dynamics);
 
   return {
     audioBuffer,
-    analysis: { waveform, spectrum, stereo, dynamics, emotional, translation },
+    analysis: { waveform, spectrum, stereo, dynamics, features, emotionalProfile, translation },
   };
 }
 
-export type { MixAnalysis, WaveformData, SpectrumData, StereoWidthData, DynamicsData, EmotionalReadData, TranslationRiskData } from "./types";
+export type {
+  MixAnalysis,
+  WaveformData,
+  SpectrumData,
+  StereoWidthData,
+  DynamicsData,
+  AudioFeatureData,
+  EmotionalProfileData,
+  EmotionalDimensionAnalysis,
+  EmotionalEvidence,
+  EmotionalRecommendation,
+  EmotionalDimensionKey,
+  TranslationRiskData,
+} from "./types";

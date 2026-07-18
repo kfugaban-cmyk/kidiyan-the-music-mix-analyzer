@@ -6,6 +6,7 @@ import { SpectrumDisplay } from "@/components/SpectrumDisplay";
 import { StereoWidthDisplay } from "@/components/StereoWidthDisplay";
 import { DynamicsDisplay } from "@/components/DynamicsDisplay";
 import { SummaryCards } from "@/components/SummaryCards";
+import { IntentionAnalysis } from "@/components/IntentionAnalysis";
 import { analyzeMix, type MixAnalysis } from "@/analysis";
 import { createDemoMixFile } from "@/demoAudio";
 
@@ -49,21 +50,21 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen print:bg-white" style={{ background: "radial-gradient(ellipse 100% 52% at 50% -8%, hsl(36 62% 93%) 0%, hsl(42 28% 97%) 56%, hsl(38 18% 95%) 100%)" }}>
       <header className="sticky top-0 z-10 backdrop-blur-sm border-b border-stone-200/60 print:static print:border-b-0 print:backdrop-blur-none" style={{ background: "hsl(42 28% 97% / 0.9)" }}>
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-3">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center shadow-sm" style={{ background: "linear-gradient(135deg, hsl(20 68% 48%) 0%, hsl(35 82% 58%) 100%)", boxShadow: "0 8px 18px rgba(180, 94, 27, 0.22)" }}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7 Q3 3 5 7 Q7 11 9 7 Q11 3 13 7" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
             </div>
             <div>
               <h1 className="text-sm font-bold text-stone-900 tracking-tight">Mix Analyzer</h1>
-              <p className="text-[10px] text-stone-500 tracking-wide">Emotional impact through interpretable mix evidence</p>
+              <p className="hidden text-[10px] text-stone-500 tracking-wide sm:block">Emotional impact through interpretable mix evidence</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 print:hidden">
+          <div className="flex shrink-0 items-center gap-2 print:hidden">
             {analysis && (
               <button
                 onClick={printReport}
-                className="text-xs font-medium text-stone-700 transition-colors px-3 py-1.5 rounded-lg bg-white/80 border border-stone-200 hover:border-stone-300 hover:text-stone-900 hover:bg-white"
+                className="whitespace-nowrap text-xs font-medium text-stone-700 transition-colors px-3 py-1.5 rounded-lg bg-white/80 border border-stone-200 hover:border-stone-300 hover:text-stone-900 hover:bg-white"
               >
                 Print report
               </button>
@@ -71,7 +72,7 @@ export default function Dashboard() {
             {file && (
               <button
                 onClick={reset}
-                className="text-xs font-medium text-stone-500 hover:text-stone-800 transition-colors px-3 py-1.5 rounded-lg hover:bg-stone-100"
+                className="whitespace-nowrap text-xs font-medium text-stone-500 hover:text-stone-800 transition-colors px-3 py-1.5 rounded-lg hover:bg-stone-100"
               >
                 New file
               </button>
@@ -145,6 +146,11 @@ export default function Dashboard() {
                 <div className="print:break-inside-avoid print-page-card">
                   <DynamicsDisplay data={analysis.dynamics} />
                 </div>
+
+                <IntentionAnalysis
+                  key={`${file?.name ?? "mix"}-${file?.size ?? 0}`}
+                  ledger={analysis.measurementLedger}
+                />
 
                 <div>
                   <div className="flex items-center gap-3 mb-3 px-1">

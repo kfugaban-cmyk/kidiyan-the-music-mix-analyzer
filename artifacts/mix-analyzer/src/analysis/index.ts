@@ -5,6 +5,7 @@ import { analyzeDynamics } from "./dynamics";
 import { analyzeAudioFeatures } from "./audioFeatures";
 import { analyzeEmotionalProfile } from "./emotionalProfile";
 import { analyzeTranslationRisk } from "./translation";
+import { createMeasurementLedger } from "@/grounded/measurementLedger";
 import type { MixAnalysis } from "./types";
 
 export async function analyzeMix(file: File): Promise<{ audioBuffer: AudioBuffer; analysis: MixAnalysis }> {
@@ -20,10 +21,11 @@ export async function analyzeMix(file: File): Promise<{ audioBuffer: AudioBuffer
   const features = analyzeAudioFeatures(audioBuffer);
   const emotionalProfile = analyzeEmotionalProfile(features);
   const translation = analyzeTranslationRisk(spectrum, stereo, dynamics);
+  const measurementLedger = createMeasurementLedger(audioBuffer, features);
 
   return {
     audioBuffer,
-    analysis: { waveform, spectrum, stereo, dynamics, features, emotionalProfile, translation },
+    analysis: { waveform, spectrum, stereo, dynamics, features, emotionalProfile, translation, measurementLedger },
   };
 }
 

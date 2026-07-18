@@ -2,6 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm --filter @workspace/mix-analyzer run build",
-  "outputDirectory": "artifacts/mix-analyzer/dist/public"
+  "buildCommand": "pnpm --filter @workspace/mix-analyzer run verify",
+  "outputDirectory": "artifacts/mix-analyzer/dist/public",
+  "functions": {
+    "api/interpret.ts": {
+      "maxDuration": 30
+    }
+  }
 }

@@ -260,6 +260,19 @@ export function analyzeAudioFeatures(audioBuffer: AudioBuffer): AudioFeatureData
   }
 
   return {
+    measured: {
+      // These are frame-averaged relative FFT-band amplitudes, kept raw so the
+      // evidence layer does not have to cite the calibrated 0-100 mood proxies.
+      bandAmplitudeSharePct: {
+        sub: Math.round(avgBand("sub") * 10) / 10,
+        bass: Math.round(avgBand("bass") * 10) / 10,
+        lowMid: Math.round(avgBand("lowMid") * 10) / 10,
+        mid: Math.round(avgBand("mid") * 10) / 10,
+        upperMid: Math.round(avgBand("upperMid") * 10) / 10,
+        brilliance: Math.round(avgBand("brilliance") * 10) / 10,
+        air: Math.round(avgBand("air") * 10) / 10,
+      },
+    },
     loudness: {
       rmsDb: Math.round(rmsDb * 10) / 10,
       peakDb: Math.round(peakDb * 10) / 10,

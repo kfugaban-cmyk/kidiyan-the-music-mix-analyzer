@@ -1,3 +1,5 @@
+import type { MeasurementLedger } from "@/grounded/types";
+
 export interface WaveformData {
   peaks: Float32Array;
   duration: number;
@@ -30,6 +32,17 @@ export interface DynamicsData {
 }
 
 export interface AudioFeatureData {
+  measured: {
+    bandAmplitudeSharePct: {
+      sub: number;
+      bass: number;
+      lowMid: number;
+      mid: number;
+      upperMid: number;
+      brilliance: number;
+      air: number;
+    };
+  };
   loudness: {
     rmsDb: number;
     peakDb: number;
@@ -153,4 +166,5 @@ export interface MixAnalysis {
   features: AudioFeatureData;
   emotionalProfile: EmotionalProfileData;
   translation: TranslationRiskData;
+  measurementLedger: MeasurementLedger;
 }

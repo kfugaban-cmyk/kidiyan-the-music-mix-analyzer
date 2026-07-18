@@ -273,6 +273,14 @@
     border: 1px solid rgba(82, 70, 50, 0.12) !important;
   }
 
+  .print-expandable > summary {
+    display: none !important;
+  }
+
+  .print-expandable > * {
+    display: block !important;
+  }
+
   .print\:hidden {
     display: none !important;
   }

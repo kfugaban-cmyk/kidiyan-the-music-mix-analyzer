@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Beaker, CheckCircle2, FlaskConical, Gauge, Sparkles } from "lucide-react";
+import { ArrowRight, Beaker, CheckCircle2, FlaskConical, Sparkles } from "lucide-react";
 import { PRODUCTION_INTENTIONS, getProductionIntention } from "@/grounded/intentions";
 import { requestGroundedInterpretation } from "@/grounded/interpretationClient";
 import type {
@@ -48,7 +48,7 @@ export function IntentionAnalysis({ ledger }: Props) {
   const selectedIntention = intention ? getProductionIntention(intention) : null;
 
   return (
-    <section className="overflow-hidden rounded-[26px] border border-stone-200 bg-white shadow-[0_20px_70px_rgba(72,55,38,0.09)] print:break-before-page">
+    <section className="overflow-hidden rounded-[24px] border border-stone-200 bg-white shadow-[0_14px_42px_rgba(72,55,38,0.08)]">
       <div
         className="relative overflow-hidden border-b border-stone-200 px-5 py-6 sm:px-7"
         style={{ background: "linear-gradient(125deg, hsl(194 39% 18%) 0%, hsl(181 29% 24%) 58%, hsl(36 48% 28%) 130%)" }}
@@ -58,11 +58,11 @@ export function IntentionAnalysis({ ledger }: Props) {
         <div className="relative">
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.24em] text-teal-100/80">
             <Beaker className="h-3.5 w-3.5" />
-            Intention-led evidence lab
+            Intention-led experiments
           </div>
-          <h3 className="mt-3 max-w-xl text-2xl font-semibold tracking-tight text-white">What are you trying to make the listener feel?</h3>
+          <h3 className="mt-3 max-w-xl text-2xl font-semibold tracking-tight text-white">Refine the next move around your intention</h3>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-200/85">
-            Choose a production intention first. The reading will use measured values as evidence, then label where technical inference ends and creative judgment begins.
+            Choose what you want the listener to feel. The analyzer will turn the same measurements into specific listening experiments without changing or inventing the evidence.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {(Object.keys(categoryLabels) as EvidenceCategory[]).map((category) => (
@@ -121,25 +121,6 @@ export function IntentionAnalysis({ ledger }: Props) {
           </div>
         )}
 
-        <div>
-          <div className="mb-3 flex items-center gap-2">
-            <Gauge className="h-4 w-4 text-emerald-700" />
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-600">Measured foundation</p>
-            <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold ${categoryStyles.measured_fact}`}>Measured fact</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {ledger.facts.slice(0, 8).map((fact) => (
-              <div key={fact.id} className="rounded-xl border border-stone-200 bg-stone-50/70 p-3 print:break-inside-avoid">
-                <p className="text-[10px] font-semibold leading-4 text-stone-500">{fact.label}</p>
-                <p className="mt-1 text-lg font-semibold tracking-tight text-stone-900">{fact.displayValue}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-2 text-[10px] leading-4 text-stone-500">
-            Measurements come from decoded PCM and sampled FFT frames. No source separation is used, and equal thirds are not claimed as song sections.
-          </p>
-        </div>
-
         {interpretation && (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div className="flex flex-col gap-3 border-t border-stone-200 pt-5 sm:flex-row sm:items-start sm:justify-between">
@@ -164,7 +145,12 @@ export function IntentionAnalysis({ ledger }: Props) {
               </div>
             )}
 
-            <div className="space-y-3">
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <FlaskConical className="h-4 w-4 text-amber-700" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-600">Intention-specific experiments</p>
+              </div>
+              <div className="grid gap-3 lg:grid-cols-2">
               {interpretation.claims.map((item, index) => {
                 const evidence = item.evidenceIds
                   .map((id) => ledger.facts.find((fact) => fact.id === id))
@@ -177,7 +163,17 @@ export function IntentionAnalysis({ ledger }: Props) {
                       </span>
                       <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-stone-400">{item.confidence} confidence</span>
                     </div>
-                    <h5 className="mt-3 text-base font-semibold text-stone-900">{item.title}</h5>
+                    <div className="mt-3 rounded-xl border border-amber-100 bg-amber-50/60 p-3">
+                      <div className="flex items-center gap-2 text-amber-900">
+                        <FlaskConical className="h-3.5 w-3.5" />
+                        <p className="text-[9px] font-bold uppercase tracking-[0.18em]">Try this first</p>
+                      </div>
+                      <p className="mt-2 text-xs font-semibold leading-5 text-stone-800">{item.experiment.action}</p>
+                      <p className="mt-1 text-[11px] leading-5 text-stone-600"><strong>Listen for:</strong> {item.experiment.listenFor}</p>
+                      <p className="mt-1 text-[11px] leading-5 text-stone-600"><strong>Tradeoff:</strong> {item.experiment.tradeoff}</p>
+                    </div>
+
+                    <h5 className="mt-4 text-base font-semibold text-stone-900">{item.title}</h5>
                     <p className="mt-1 text-sm leading-6 text-stone-600">{item.statement}</p>
 
                     <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50/55 p-3">
@@ -198,18 +194,10 @@ export function IntentionAnalysis({ ledger }: Props) {
                       </div>
                     </div>
 
-                    <div className="mt-3 rounded-xl border border-amber-100 bg-amber-50/50 p-3">
-                      <div className="flex items-center gap-2 text-amber-900">
-                        <FlaskConical className="h-3.5 w-3.5" />
-                        <p className="text-[9px] font-bold uppercase tracking-[0.18em]">Listening experiment</p>
-                      </div>
-                      <p className="mt-2 text-xs font-semibold leading-5 text-stone-800">{item.experiment.action}</p>
-                      <p className="mt-1 text-[11px] leading-5 text-stone-600"><strong>Listen for:</strong> {item.experiment.listenFor}</p>
-                      <p className="mt-1 text-[11px] leading-5 text-stone-600"><strong>Tradeoff:</strong> {item.experiment.tradeoff}</p>
-                    </div>
                   </article>
                 );
               })}
+              </div>
             </div>
 
             <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3">

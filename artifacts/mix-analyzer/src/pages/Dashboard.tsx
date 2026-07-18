@@ -1,12 +1,7 @@
 import { useState, useCallback } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { AudioPlayer } from "@/components/AudioPlayer";
-import { WaveformDisplay } from "@/components/WaveformDisplay";
-import { SpectrumDisplay } from "@/components/SpectrumDisplay";
-import { StereoWidthDisplay } from "@/components/StereoWidthDisplay";
-import { DynamicsDisplay } from "@/components/DynamicsDisplay";
 import { SummaryCards } from "@/components/SummaryCards";
-import { IntentionAnalysis } from "@/components/IntentionAnalysis";
 import { analyzeMix, type MixAnalysis } from "@/analysis";
 import { createDemoMixFile } from "@/demoAudio";
 
@@ -130,31 +125,9 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="print:break-inside-avoid print-page-card">
-                  <WaveformDisplay data={analysis.waveform} />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 print:grid-cols-2">
-                  <div className="print:break-inside-avoid print-page-card">
-                    <SpectrumDisplay data={analysis.spectrum} />
-                  </div>
-                  <div className="print:break-inside-avoid print-page-card">
-                    <StereoWidthDisplay data={analysis.stereo} />
-                  </div>
-                </div>
-
-                <div className="print:break-inside-avoid print-page-card">
-                  <DynamicsDisplay data={analysis.dynamics} />
-                </div>
-
-                <IntentionAnalysis
-                  key={`${file?.name ?? "mix"}-${file?.size ?? 0}`}
-                  ledger={analysis.measurementLedger}
-                />
-
                 <div>
                   <div className="flex items-center gap-3 mb-3 px-1">
-                    <p className="text-xs font-bold text-stone-600 uppercase tracking-widest">Emotional Analysis</p>
+                    <p className="text-xs font-bold text-stone-600 uppercase tracking-widest">Judge-facing mix analysis</p>
                     <div className="flex-1 h-px bg-gradient-to-r from-stone-300 to-transparent" />
                   </div>
                   <SummaryCards analysis={analysis} />

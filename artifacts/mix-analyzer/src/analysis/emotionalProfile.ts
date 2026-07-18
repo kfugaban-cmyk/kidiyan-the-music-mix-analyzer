@@ -39,9 +39,10 @@ function tendency(score: number): "low" | "moderate" | "high" {
 }
 
 function joinPhrases(values: string[]): string {
-  if (values.length <= 1) return values[0] ?? "";
-  if (values.length === 2) return `${values[0]} and ${values[1]}`;
-  return `${values.slice(0, -1).join(", ")}, and ${values[values.length - 1]}`;
+  const cleanValues = values.map((value) => value.trim().replace(/[.!?]+$/, ""));
+  if (cleanValues.length <= 1) return cleanValues[0] ?? "";
+  if (cleanValues.length === 2) return `${cleanValues[0]} and ${cleanValues[1]}`;
+  return `${cleanValues.slice(0, -1).join(", ")}, and ${cleanValues[cleanValues.length - 1]}`;
 }
 
 function driverContribution(driver: Driver, features: AudioFeatureData): number {

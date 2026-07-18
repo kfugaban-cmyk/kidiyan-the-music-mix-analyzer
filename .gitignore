@@ -54,7 +54,7 @@ Thumbs.db
 .cache/
 .local/
 
-# user-provided or locally rendered audio (the deterministic demo is source-generated)
+# user-provided or locally rendered audio (except the explicit bundled sample below)
 uploads/
 recordings/
 exports/
@@ -65,3 +65,6 @@ exports/
 *.aiff
 *.flac
 *.m4a
+
+# Explicitly bundled, project-owner-provided demo excerpt.
+!artifacts/mix-analyzer/public/demo/anche-se-ti-sbagli-demo.wav

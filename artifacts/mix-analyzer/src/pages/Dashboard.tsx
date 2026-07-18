@@ -3,7 +3,7 @@ import { FileUpload } from "@/components/FileUpload";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { SummaryCards } from "@/components/SummaryCards";
 import { analyzeMix, type MixAnalysis } from "@/analysis";
-import { createDemoMixFile } from "@/demoAudio";
+import { loadDemoMixFile } from "@/demoAudio";
 
 export default function Dashboard() {
   const [file, setFile] = useState<File | null>(null);
@@ -34,8 +34,16 @@ export default function Dashboard() {
     setError(null);
   };
 
-  const handleDemo = useCallback(() => {
-    void handleFile(createDemoMixFile());
+  const handleDemo = useCallback(async () => {
+    setError(null);
+    setIsAnalyzing(true);
+    try {
+      await handleFile(await loadDemoMixFile());
+    } catch (demoError) {
+      console.error(demoError);
+      setError("The bundled sample mix could not be loaded. Please try again.");
+      setIsAnalyzing(false);
+    }
   }, [handleFile]);
 
   const printReport = useCallback(() => {

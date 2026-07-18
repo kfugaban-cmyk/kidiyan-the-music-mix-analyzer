@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { Upload, Music, Play } from "lucide-react";
+import { DEMO_TRACK } from "@/demoAudio";
 
 interface Props {
   onFile: (file: File) => void;
@@ -107,9 +108,11 @@ export function FileUpload({ onFile, onDemo, isAnalyzing }: Props) {
             className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-900 transition-colors hover:border-amber-300 hover:bg-amber-100"
           >
             <Play className="h-3.5 w-3.5 fill-current" />
-            Analyze demo mix
+            Analyze sample mix
           </button>
-          <span className="text-[11px] text-stone-500">Original, rights-cleared, and generated locally</span>
+          <span className="text-[11px] text-stone-500">
+            “{DEMO_TRACK.title}” · project-provided {DEMO_TRACK.excerpt} excerpt
+          </span>
         </div>
       )}
     </div>

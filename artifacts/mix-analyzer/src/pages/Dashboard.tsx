@@ -46,13 +46,9 @@ export default function Dashboard() {
     }
   }, [handleFile]);
 
-  const printReport = useCallback(() => {
-    window.print();
-  }, []);
-
   return (
-    <div className="min-h-screen print:bg-white" style={{ background: "radial-gradient(ellipse 100% 52% at 50% -8%, hsl(36 62% 93%) 0%, hsl(42 28% 97%) 56%, hsl(38 18% 95%) 100%)" }}>
-      <header className="sticky top-0 z-10 backdrop-blur-sm border-b border-stone-200/60 print:static print:border-b-0 print:backdrop-blur-none" style={{ background: "hsl(42 28% 97% / 0.9)" }}>
+    <div className="min-h-screen" style={{ background: "radial-gradient(ellipse 100% 52% at 50% -8%, hsl(36 62% 93%) 0%, hsl(42 28% 97%) 56%, hsl(38 18% 95%) 100%)" }}>
+      <header className="sticky top-0 z-10 backdrop-blur-sm border-b border-stone-200/60" style={{ background: "hsl(42 28% 97% / 0.9)" }}>
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-3">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center shadow-sm" style={{ background: "linear-gradient(135deg, hsl(20 68% 48%) 0%, hsl(35 82% 58%) 100%)", boxShadow: "0 8px 18px rgba(180, 94, 27, 0.22)" }}>
@@ -63,15 +59,7 @@ export default function Dashboard() {
               <p className="hidden text-[10px] text-stone-500 tracking-wide sm:block">Emotional impact through interpretable mix evidence</p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2 print:hidden">
-            {analysis && (
-              <button
-                onClick={printReport}
-                className="whitespace-nowrap text-xs font-medium text-stone-700 transition-colors px-3 py-1.5 rounded-lg bg-white/80 border border-stone-200 hover:border-stone-300 hover:text-stone-900 hover:bg-white"
-              >
-                Print report
-              </button>
-            )}
+          <div className="flex shrink-0 items-center gap-2">
             {file && (
               <button
                 onClick={reset}
@@ -84,7 +72,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-8 space-y-5 print:max-w-none print:px-0 print:py-4">
+      <main className="max-w-3xl mx-auto px-4 py-8 space-y-5">
         {!file ? (
           <div className="space-y-6">
             <div className="text-center pt-10 pb-4">
@@ -99,7 +87,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            <div className="print:hidden">
+            <div>
               <FileUpload onFile={handleFile} isAnalyzing={isAnalyzing} />
             </div>
 
@@ -110,7 +98,7 @@ export default function Dashboard() {
             )}
 
             {file && !isAnalyzing && !error && (
-              <div className="print:hidden">
+              <div>
                 <AudioPlayer file={file} />
               </div>
             )}
@@ -124,15 +112,7 @@ export default function Dashboard() {
             )}
 
             {analysis && (
-              <div className="print-report space-y-5">
-                <div className="hidden print:block print:mb-4">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-stone-500">Mix Analyzer Report</p>
-                  <h2 className="mt-1 text-2xl font-semibold text-stone-900">{file?.name ?? "Mix analysis"}</h2>
-                  <p className="mt-2 text-sm leading-6 text-stone-600">
-                    Emotional mix analysis based on interpretable stereo-audio evidence. Printed views preserve the structure of the emotional profile, evidence, and action steps.
-                  </p>
-                </div>
-
+              <div className="space-y-5">
                 <div>
                   <div className="flex items-center gap-3 mb-3 px-1">
                     <p className="text-xs font-bold text-stone-600 uppercase tracking-widest">Judge-facing mix analysis</p>

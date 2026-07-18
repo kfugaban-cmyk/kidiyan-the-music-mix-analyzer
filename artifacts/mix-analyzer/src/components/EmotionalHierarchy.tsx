@@ -182,7 +182,7 @@ export function EmotionalHierarchy({ dimensions }: Props) {
   const averageTop = Math.round((primary.score + secondary.score + tertiary.score) / 3);
 
   return (
-    <div className="rounded-[30px] border border-stone-200/80 bg-[linear-gradient(160deg,rgba(255,255,255,0.95)_0%,rgba(248,243,235,0.92)_50%,rgba(245,238,229,0.88)_100%)] p-5 shadow-[0_18px_56px_rgba(34,26,14,0.10)] print:hidden">
+    <div className="rounded-[30px] border border-stone-200/80 bg-[linear-gradient(160deg,rgba(255,255,255,0.95)_0%,rgba(248,243,235,0.92)_50%,rgba(245,238,229,0.88)_100%)] p-5 shadow-[0_18px_56px_rgba(34,26,14,0.10)]">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-xl">
           <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-stone-500">Emotional hierarchy</p>
@@ -223,16 +223,17 @@ export function EmotionalHierarchy({ dimensions }: Props) {
         <div className="absolute left-1/2 top-[54%] h-[52%] w-[52%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-stone-300/35" />
         <div className="absolute left-1/2 top-[54%] h-[72%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-stone-300/25" />
 
-        <EmotionNode dimension={primary} rank={1} className="left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2" />
-        <EmotionNode dimension={secondary} rank={2} className="left-[16%] top-[18%] md:left-[18%] md:top-[16%]" />
-        <EmotionNode dimension={tertiary} rank={3} className="right-[10%] top-[22%] md:right-[14%] md:top-[20%]" />
+        <EmotionNode dimension={primary} rank={1} className="bottom-[7%] left-1/2 -translate-x-1/2 md:bottom-auto md:top-[52%] md:-translate-y-1/2" />
+        <EmotionNode dimension={secondary} rank={2} className="left-[2%] top-[12%] md:left-[18%] md:top-[16%]" />
+        <EmotionNode dimension={tertiary} rank={3} className="right-[2%] top-[14%] md:right-[14%] md:top-[20%]" />
 
-        <div className="absolute bottom-5 left-5 max-w-[18rem] rounded-2xl bg-white/78 px-4 py-3 ring-1 ring-stone-200/75 backdrop-blur-[6px]">
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">Reading</p>
-          <p className="mt-1 text-sm leading-6 text-stone-700">
-            The center node marks the strongest emotional anchor. Supporting nodes stay offset and slightly smaller so the mix reads as a field of forces rather than a ranked list.
-          </p>
-        </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-stone-200/75 bg-white/72 px-4 py-3 shadow-[0_8px_24px_rgba(35,32,24,0.04)] sm:flex sm:items-start sm:gap-4">
+        <p className="shrink-0 pt-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">Reading</p>
+        <p className="mt-1 text-sm leading-6 text-stone-700 sm:mt-0">
+          The center node marks the strongest emotional anchor. Supporting nodes stay offset and slightly smaller so the mix reads as a field of forces rather than a ranked list.
+        </p>
       </div>
     </div>
   );

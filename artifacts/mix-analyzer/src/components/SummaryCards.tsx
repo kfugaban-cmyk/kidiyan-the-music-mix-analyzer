@@ -45,7 +45,7 @@ function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-[24px] p-5 print-page-card print:break-inside-avoid" style={surfaceStyle}>
+    <div className="rounded-[24px] p-5" style={surfaceStyle}>
       <div className="flex items-center gap-3 mb-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-stone-900 text-stone-50 shadow-sm">
           {icon}
@@ -133,7 +133,7 @@ function FindingCard({ dimension, index }: { dimension: EmotionalDimensionAnalys
   const evidence = dimension.evidence.find((item) => item.strength === "strong") ?? dimension.evidence[0];
 
   return (
-    <article className="rounded-[24px] border border-stone-200/80 bg-white/88 p-5 shadow-[0_10px_30px_rgba(35,32,24,0.06)] print-page-card print:break-inside-avoid">
+    <article className="rounded-[24px] border border-stone-200/80 bg-white/88 p-5 shadow-[0_10px_30px_rgba(35,32,24,0.06)]">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Finding {index + 1}</p>
@@ -171,7 +171,7 @@ function QuickExperiment({ dimension }: { dimension: EmotionalDimensionAnalysis 
   if (!action) return null;
 
   return (
-    <article className="rounded-[22px] border border-amber-100 bg-amber-50/55 p-4 print-page-card print:break-inside-avoid">
+    <article className="rounded-[22px] border border-amber-100 bg-amber-50/55 p-4">
       <div className="flex items-center gap-2 text-amber-900">
         <FlaskConical className="h-4 w-4" />
         <p className="text-[10px] font-bold uppercase tracking-[0.18em]">A/B experiment</p>
@@ -189,7 +189,7 @@ function DeepReadingCard({ dimension }: { dimension: EmotionalDimensionAnalysis 
   const reduce = dimension.recommendations.find((item) => item.direction === "reduce");
 
   return (
-    <article className="rounded-[22px] border border-stone-200 bg-white p-5 print-page-card print:break-inside-avoid">
+    <article className="rounded-[22px] border border-stone-200 bg-white p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h4 className="text-base font-semibold text-stone-900">{dimension.name}</h4>
@@ -228,7 +228,7 @@ export function SummaryCards({ analysis }: Props) {
   const deeperReadings = distinctDeeperReadings(rankedDimensions.slice(3));
 
   return (
-    <div className="space-y-5 print:space-y-4">
+    <div className="space-y-5">
       <SectionCard icon={<Sparkles className="h-5 w-5" />} title="Overall Mix Identity" eyebrow="Perceived emotional profile">
         <div className="space-y-4">
           <p className="max-w-3xl text-sm leading-6 text-stone-800">{emotionalProfile.overview}</p>
@@ -293,7 +293,7 @@ export function SummaryCards({ analysis }: Props) {
             <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500">Measurement ledger</p>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
               {analysis.measurementLedger.facts.map((fact) => (
-                <div key={fact.id} className="rounded-xl border border-stone-200 bg-white p-3 print:break-inside-avoid">
+                <div key={fact.id} className="rounded-xl border border-stone-200 bg-white p-3">
                   <p className="text-[10px] font-semibold leading-4 text-stone-500">{fact.label}</p>
                   <p className="mt-1 text-lg font-semibold tracking-tight text-stone-900">{fact.displayValue}</p>
                   <p className="mt-1 text-[9px] leading-4 text-stone-500">{fact.method}</p>
@@ -324,7 +324,7 @@ export function SummaryCards({ analysis }: Props) {
         </div>
       </SectionCard>
 
-      <details className="group print-expandable overflow-hidden rounded-[26px] border border-stone-200 bg-white shadow-[0_14px_44px_rgba(35,32,24,0.07)]">
+      <details className="group overflow-hidden rounded-[26px] border border-stone-200 bg-white shadow-[0_14px_44px_rgba(35,32,24,0.07)]">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 marker:content-none sm:px-7">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-stone-900 text-stone-50"><Layers3 className="h-5 w-5" /></div>

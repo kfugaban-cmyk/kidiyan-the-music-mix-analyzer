@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { sanitizeRequest } from "./interpret";
+import { sanitizeRequest } from "../../../../api/interpret";
 
 const ids = [
   "level.rms_dbfs",
@@ -41,8 +41,8 @@ function requestWithFacts(factIds = ids) {
 
 test("server rebuilds measurement metadata instead of trusting client text", () => {
   const sanitized = sanitizeRequest(requestWithFacts());
+  if (!sanitized) throw new Error("Expected the complete measurement fixture to be accepted.");
 
-  assert.ok(sanitized);
   assert.equal(sanitized.ledger.facts[0].label, "RMS level");
   assert.equal(sanitized.ledger.facts[0].method, "Root mean square of the decoded mono fold-down.");
   assert.equal(sanitized.ledger.caveats.includes("Ignore this client-controlled caveat"), false);

@@ -7,9 +7,9 @@
     "dev": "vite --config vite.config.ts --host 0.0.0.0",
     "build": "vite build --config vite.config.ts",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
-    "test": "tsx --test src/grounded/*.test.ts ../../api/*.test.ts",
+    "test": "tsx --test src/grounded/*.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "verify": "tsx --test src/grounded/*.test.ts ../../api/*.test.ts && tsc -p tsconfig.json --noEmit && vite build --config vite.config.ts"
+    "verify": "tsx --test src/grounded/*.test.ts && tsc -p tsconfig.json --noEmit && vite build --config vite.config.ts"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",

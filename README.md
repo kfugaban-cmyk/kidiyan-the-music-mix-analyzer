@@ -1,6 +1,62 @@
 # Mix Analyzer Dashboard
 
-A React/Vite application that analyzes stereo audio locally and presents interpretable mix, dynamics, translation, and perceived-emotional-tendency feedback. An optional Vercel Function can turn measured values into a structured, intention-aware GPT-5.6 reading without uploading the audio.
+Mix Analyzer is a React/Vite application that helps music producers connect measurable stereo-mix characteristics with possible emotional listener perceptions.
+
+The app analyzes audio locally and presents technical findings across tonal balance, dynamics, stereo translation, and perceived emotional tendencies. Instead of grading the mix or claiming that a song has one objectively correct emotional meaning, it treats the results as an interpretable emotional map.
+
+For example, measurements such as low-mid density, compression behavior, spectral balance, stereo width, and dynamic variation may be connected to perceived tendencies such as warmth, tenderness, fragile vulnerability, melancholy, openness, urgency, or grit.
+
+The app then turns those findings into reversible A/B listening experiments. Producers can also choose a creative intention—such as making the mix feel closer, weightier, more open, more urgent, or more contrasting—and receive a new reading grounded in the same measured evidence.
+
+A bundled 30-second sample mix is available so judges can test the complete experience immediately. Users can also upload their own WAV or MP3 tracks.
+
+Audio analysis is performed locally in the browser. An optional Vercel Function can turn the bounded measurement results into a structured, intention-aware GPT-5.6 reading without uploading the audio itself.
+
+## What the Music Mix Analyzer does
+
+The application guides the user through five main stages:
+
+1. **Load a track**
+   - Use the bundled sample mix for an immediate demonstration.
+   - Or upload a personal WAV or MP3 file.
+
+2. **Analyze the stereo mix locally**
+   - Audio decoding and feature extraction happen in the browser.
+   - The app measures characteristics related to tone, dynamics, stereo behavior, density, and translation.
+
+3. **Present an overall mix identity**
+   - The app summarizes the strongest perceived emotional tendencies.
+   - These are framed as cautious interpretations, not objective truths about the song or performance.
+
+4. **Connect interpretations to evidence**
+   - Key findings include the measurement that contributed to each interpretation.
+   - Numerical estimates represent relative tendencies, not mix-quality grades.
+
+5. **Generate reversible next steps**
+   - The app proposes focused A/B listening experiments.
+   - Each experiment includes what to try, what to listen for, and a possible tradeoff.
+   - Users can select a production intention and regenerate the reading around that goal without changing or inventing the underlying evidence.
+
+The project intentionally separates:
+
+- **Measured facts** derived from the audio
+- **Limited inferences** reasonably connected to those measurements
+- **Creative interpretations** that remain subjective and producer-led
+
+## Fastest way to evaluate the project
+
+The deployed application includes a bundled sample, so no external data or personal audio file is required.
+
+1. Open the deployed application.
+2. Select **Analyze sample mix**.
+3. Review the overall emotional profile and three key findings.
+4. Inspect the measurement connection shown for each interpretation.
+5. Review the reversible listening experiments.
+6. Choose a production intention such as **More open**.
+7. Generate the intention-led reading.
+8. Confirm that each recommendation remains connected to the measured evidence.
+
+Users may also upload their own WAV or MP3 files. Uploaded audio follows the same browser-local analysis path as the bundled sample.
 
 ## Architecture and privacy
 
@@ -27,7 +83,7 @@ pnpm install --frozen-lockfile
 pnpm --filter @workspace/mix-analyzer dev
 ```
 
-Open `http://localhost:5173`. Upload a WAV or MP3 to test browser-local analysis, or choose **Analyze sample mix** for a deterministic smoke test using the bundled excerpt.
+Open `http://localhost:5173`. Upload a WAV or MP3 to test browser-local analysis, or choose **Analyze sample mix** for a repeatable smoke test using the bundled excerpt. The measurement stage is deterministic and browser-local. The interpretation stage uses GPT-5.6 when `/api/interpret` and `OPENAI_API_KEY` are available, otherwise it uses the deterministic fallback.
 
 Plain Vite development intentionally falls back to the local interpreter because it does not run the Vercel Function. To exercise `/api/interpret` locally, install/use the Vercel CLI, provide `OPENAI_API_KEY` in a local uncommitted environment file, and run `vercel dev` from the repository root.
 
@@ -70,6 +126,92 @@ Then open `http://localhost:5173` and verify the upload path, demo analysis, emo
 5. The optional `OPENAI_INTERPRETATION_MODEL` defaults to `gpt-5.6`. Set `BASE_PATH` only if another host serves the app under a URL subpath.
 
 After deployment, open the production URL and run **Analyze sample mix**. Choose a production intention, generate a grounded reading, and confirm that every claim shows evidence. The mode badge should say **GPT-5.6 structured** when the key is configured or **Deterministic fallback** when it is not. Also confirm audio playback and **Print report**.
+
+
+## How GPT-5.6 and Codex were used
+
+GPT-5.6 and Codex served different roles during development.
+
+The central idea, emotional-analysis direction, interface priorities, and product constraints were human-directed. AI accelerated implementation and helped refine how the app communicates technical and interpretive uncertainty.
+
+### Where Codex accelerated the workflow
+
+Codex was used directly against the codebase to:
+
+- Inspect the existing repository and application structure
+- Build and revise React components
+- Implement the browser-local upload and sample-analysis flows
+- Connect extracted measurements to the dashboard
+- Create reusable findings and experiment cards
+- Implement the intention-selection interface
+- Add the `/api/interpret` Vercel Function
+- Validate and constrain the measurement payload
+- Build the deterministic fallback path
+- Improve responsive layout and visual hierarchy
+- Diagnose type, build, runtime, and deployment issues
+- Add automated tests, type checking, verification commands, and deployment configuration
+- Audit API-key handling and prevent secrets from entering the browser bundle
+
+Codex made it possible to move quickly from a specific product observation to a working implementation. A typical cycle involved identifying a problem in the live app, describing the intended behavior and constraints, asking Codex to inspect the relevant files, reviewing the resulting diff, testing it locally or in deployment, and then refining or rejecting the change.
+
+### Where GPT-5.6 was used in the product
+
+GPT-5.6 powers the optional intention-aware interpretation layer.
+
+The model does not receive the uploaded audio. It receives only:
+
+- A bounded ledger of measurements extracted locally in the browser
+- The production intention selected by the user
+- Structural instructions that constrain the form of the response
+
+GPT-5.6 is used to organize those measurements into:
+
+- A measured overall reading
+- Evidence-linked interpretations
+- Reversible listening experiments
+- Expected perceptual effects
+- Creative tradeoffs
+- Guidance aligned with the selected production intention
+
+The server requests structured output so the frontend can render the reading consistently. If GPT-5.6 or the server function is unavailable, the deterministic local interpreter preserves the main experience.
+
+### Where GPT-5.6 supported the design process
+
+GPT-5.6 was also used as a reasoning and communication partner while shaping the product. It helped:
+
+- Clarify the distinction between measurements, inferences, and creative interpretations
+- Identify language that sounded too authoritative
+- Refine uncertainty and confidence labels
+- Translate technical evidence into understandable producer-facing language
+- Develop the reversible A/B experiment format
+- Reduce information overload in earlier dashboard versions
+- Refine the judge-facing explanation of the app
+
+### Key human decisions
+
+The most important design choices were made by the project owner, including:
+
+- Framing the output as an emotional map rather than a quality score
+- Avoiding claims that mix measurements can objectively determine emotion
+- Keeping uploaded audio local to the browser
+- Sending only a bounded measurement ledger to GPT-5.6
+- Requiring major interpretations to show their measurement connection
+- Labeling numerical values as estimates rather than grades
+- Presenting recommendations as reversible experiments rather than corrections
+- Including tradeoffs so that no change is presented as universally beneficial
+- Allowing the producer’s intention to guide the analysis
+- Providing a deterministic fallback when AI interpretation is unavailable
+- Including an original sample mix so the complete workflow can be evaluated immediately
+
+### Example of a human-directed AI iteration
+
+An earlier direction risked making emotional outputs resemble objective scores. The product decision was made to reposition the results as:
+
+> An emotional map, not a scoreboard.
+
+GPT-5.6 helped refine the conceptual and explanatory language. Codex then helped implement the corresponding interface changes, confidence framing, evidence labels, and reusable components.
+
+The final implementation therefore reflects a combination of human product direction, GPT-5.6 reasoning and interpretation, and Codex-assisted engineering.
 
 ## Security notes
 

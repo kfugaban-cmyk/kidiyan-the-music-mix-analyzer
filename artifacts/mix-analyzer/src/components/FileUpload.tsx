@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Upload, Music, Play } from "lucide-react";
+import { ArrowRight, Upload, Music, Play } from "lucide-react";
 import { DEMO_TRACK } from "@/demoAudio";
 
 interface Props {
@@ -38,7 +38,55 @@ export function FileUpload({ onFile, onDemo, isAnalyzing }: Props) {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      {onDemo && (
+        <div className="space-y-4">
+          <button
+            type="button"
+            onClick={onDemo}
+            disabled={isAnalyzing}
+            className="group relative w-full overflow-hidden rounded-[28px] border border-stone-800 bg-stone-950 px-5 py-5 text-left text-white shadow-[0_22px_55px_rgba(39,30,20,0.22)] transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/70 hover:shadow-[0_28px_65px_rgba(39,30,20,0.28)] focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0 sm:px-7 sm:py-6"
+          >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_10%,rgba(245,158,11,0.22)_0%,rgba(245,158,11,0)_35%),linear-gradient(115deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0)_55%)]" />
+            <div className="pointer-events-none absolute -right-14 -top-20 h-52 w-52 rounded-full border border-amber-300/10" />
+            <div className="pointer-events-none absolute -right-5 -top-12 h-36 w-36 rounded-full border border-amber-300/10" />
+
+            <div className="relative flex items-center gap-4 sm:gap-5">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#f6b954_0%,#d86f2c_100%)] text-stone-950 shadow-[0_10px_28px_rgba(224,127,45,0.35)] transition-transform duration-300 group-hover:scale-105 sm:h-16 sm:w-16">
+                {isAnalyzing
+                  ? <div className="h-6 w-6 animate-spin rounded-full border-2 border-stone-950 border-t-transparent" />
+                  : <Play className="h-6 w-6 fill-current sm:h-7 sm:w-7" />
+                }
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-amber-300">Recommended for judges</p>
+                <p className="mt-1 text-xl font-semibold tracking-tight text-white sm:text-2xl">
+                  {isAnalyzing ? "Loading the sample mix..." : "Analyze the sample mix"}
+                </p>
+                <p className="mt-1.5 max-w-lg text-xs leading-5 text-stone-300 sm:text-sm">
+                  Run the complete emotional analysis immediately with the built-in 30-second excerpt.
+                </p>
+                <p className="mt-2 truncate text-[10px] font-medium text-amber-100/70 sm:text-xs">
+                  “{DEMO_TRACK.title}” · {DEMO_TRACK.excerpt} excerpt
+                </p>
+              </div>
+
+              <span className="hidden shrink-0 items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold text-stone-900 transition-transform duration-300 group-hover:translate-x-1 sm:inline-flex">
+                Start analysis
+                <ArrowRight className="h-3.5 w-3.5" />
+              </span>
+            </div>
+          </button>
+
+          <div className="flex items-center gap-3 px-2" aria-hidden="true">
+            <div className="h-px flex-1 bg-stone-200" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">or analyze your own mix</span>
+            <div className="h-px flex-1 bg-stone-200" />
+          </div>
+        </div>
+      )}
+
       <label
         className={`
           relative flex flex-col items-center justify-center gap-4
@@ -100,21 +148,6 @@ export function FileUpload({ onFile, onDemo, isAnalyzing }: Props) {
         )}
       </label>
 
-      {onDemo && !isAnalyzing && (
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
-          <button
-            type="button"
-            onClick={onDemo}
-            className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-900 transition-colors hover:border-amber-300 hover:bg-amber-100"
-          >
-            <Play className="h-3.5 w-3.5 fill-current" />
-            Analyze sample mix
-          </button>
-          <span className="text-[11px] text-stone-500">
-            “{DEMO_TRACK.title}” · project-provided {DEMO_TRACK.excerpt} excerpt
-          </span>
-        </div>
-      )}
     </div>
   );
 }

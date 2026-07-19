@@ -1,6 +1,6 @@
 # Mix Analyzer Dashboard
 
-Mix Analyzer is a React/Vite application that helps music producers connect measurable stereo-mix characteristics with possible emotional listener perceptions.
+Mix Analyzer is a React/Vite application that helps developing music producers translate technical mix measurements into evidence-linked emotional interpretations and practical listening experiments.
 
 The app analyzes audio locally and presents technical findings across tonal balance, dynamics, stereo translation, and perceived emotional tendencies. Instead of grading the mix or claiming that a song has one objectively correct emotional meaning, it treats the results as an interpretable emotional map.
 

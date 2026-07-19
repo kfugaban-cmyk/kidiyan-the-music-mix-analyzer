@@ -12,6 +12,110 @@ A bundled 30-second sample mix is available so judges can test the complete expe
 
 Audio analysis is performed locally in the browser. An optional Vercel Function can turn the bounded measurement results into a structured, intention-aware GPT-5.6 reading without uploading the audio itself.
 
+## Potential Impact
+
+Mix Analyzer addresses a specific problem faced by developing music producers, independent artists, songwriters, and self-mixing musicians:
+
+Technical audio-analysis tools can show what is happening in a mix, but they often do not help users understand how those measurements may affect the emotional experience of the listener.
+
+A producer may be able to see that a track has strong low-mid energy, limited dynamic variation, or a narrow stereo image without knowing what those traits could mean creatively. The result is often one of two extremes:
+
+- Technical feedback that is accurate but difficult to act on
+- Generic AI advice that sounds confident but is not visibly connected to the audio evidence
+
+Mix Analyzer is designed to bridge that gap.
+
+### The audience
+
+The primary audience includes:
+
+- Developing producers who understand basic mixing concepts but are still learning how technical choices affect perception
+- Independent artists who mix their own music without regular access to an experienced engineer
+- Songwriters and vocal producers who think first in terms of emotion rather than engineering terminology
+- Music students who need a clearer connection between audio measurements and creative decisions
+
+The app is not intended to replace a mix engineer or make final artistic decisions. It is intended to make technical evidence more understandable and useful during the revision process.
+
+### How the demonstrated solution addresses the problem
+
+The project addresses the problem through several concrete design choices demonstrated in the working application.
+
+#### 1. It connects interpretation to evidence
+
+Each major finding includes the measurement associated with the interpretation. The app does not simply say that a mix feels warm, vulnerable, or melancholic; it shows which measured characteristics contributed to that reading.
+
+This helps the user understand both the technical condition and its possible creative significance.
+
+#### 2. It avoids reducing the mix to a quality score
+
+The emotional profile is presented as a set of perceived tendencies rather than a grade.
+
+This is important because a darker, denser, narrower, or less dynamic mix may be artistically appropriate. The app does not assume that technical difference is technical failure.
+
+#### 3. It produces actionable but reversible guidance
+
+The app turns its findings into small A/B listening experiments rather than permanent corrections.
+
+Each suggestion explains:
+
+- What adjustment to test
+- What perceptual change to listen for
+- What tradeoff the change might introduce
+
+This gives the producer a specific next step while keeping the final decision in human hands.
+
+#### 4. It adapts to the producer's intention
+
+A user can choose whether they want the mix to feel closer, weightier, more open, more urgent, or more contrasting.
+
+The app then reorganizes its recommendations around that goal while using the same underlying evidence. This makes the guidance more relevant than a universal list of mixing rules.
+
+#### 5. It lowers the barrier to evaluation
+
+The bundled sample mix allows judges and new users to experience the full workflow immediately.
+
+Users can also analyze their own WAV or MP3 files, making the demonstrated experience directly transferable to real production work.
+
+#### 6. It protects user audio
+
+Audio decoding and feature extraction happen locally in the browser. The audio itself is not uploaded for interpretation.
+
+Only a bounded ledger of measurements and the selected production intention may be sent to the server function. This makes the system more credible for artists working with private or unreleased material.
+
+### Why the impact is credible
+
+The project does not claim to solve the subjective nature of musical emotion.
+
+Instead, it solves a narrower and more realistic problem:
+
+> Helping producers understand how measurable mix characteristics may contribute to listener perception, and helping them identify a grounded next experiment.
+
+That value is demonstrated in the application itself:
+
+- The app accepts real audio
+- Extracts measurable features locally
+- Shows evidence-linked findings
+- Generates intention-aware recommendations
+- Provides a deterministic fallback
+- Includes an immediately testable sample
+- Preserves producer control over the final artistic decision
+
+The potential impact is therefore not based only on a future concept. The core workflow is already implemented and can be evaluated end to end.
+
+### Long-term potential
+
+With further testing and calibration, the same approach could support:
+
+- Music-production education
+- Guided mix revision for independent artists
+- Comparison between two versions of a mix
+- Section-by-section analysis
+- Feedback tools for songwriting and production courses
+- More accessible communication between artists and engineers
+- Genre-aware interpretation
+- Collaborative review between producers, vocalists, and clients
+
+The broader opportunity is to make audio analysis more interpretable, emotionally relevant, and usable by people who do not naturally think in engineering measurements.
 ## What the Music Mix Analyzer does
 
 The application guides the user through five main stages:

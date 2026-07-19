@@ -127,7 +127,31 @@ Then open `http://localhost:5173` and verify the upload path, demo analysis, emo
 
 After deployment, open the production URL and run **Analyze sample mix**. Choose a production intention, generate a grounded reading, and confirm that every claim shows evidence. The mode badge should say **GPT-5.6 structured** when the key is configured or **Deterministic fallback** when it is not. Also confirm audio playback and **Print report**.
 
+## How GPT-5.5, GPT-5.6, and Codex were used
 
+The project developed across multiple OpenAI tools and model generations. GPT-5.5, GPT-5.6, and Codex served different but complementary roles during development.
+
+GPT-5.5 was used during much of the early product-development process, including concept exploration, interface critique, wording refinement, feature prioritization, and repeated evaluation of the deployed app.
+
+GPT-5.6 was used later for deeper technical and product reasoning, judge-facing documentation, and the app’s optional structured intention-aware interpretation layer.
+
+Codex worked directly with the repository to implement, refactor, test, debug, and deploy the application.
+
+### Where GPT-5.5 contributed
+
+GPT-5.5 supported the earlier design and iteration process by helping to:
+
+- Develop the original concept of connecting mix measurements to perceived emotional tendencies
+- Review screenshots and deployed versions of the app
+- Identify areas where the dashboard was too dense or repetitive
+- Refine the structure of the emotional profile and deep-reading cards
+- Improve producer-facing explanations
+- Develop the idea of reversible listening experiments
+- Clarify how confidence, uncertainty, and subjectivity should be communicated
+- Prepare prompts and implementation instructions for Codex
+- Evaluate whether new features supported the central product idea
+
+These conversations helped shape the product direction before and alongside the code-level implementation.
 ## How GPT-5.6 and Codex were used
 
 GPT-5.6 and Codex served different roles during development.
